@@ -1,0 +1,1066 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="Generate professional certificates in bulk, verify credentials, and manage email dispatch securely. The #1 free certificate generator platform for schools, colleges, and organizations.">
+    <meta name="keywords"
+        content="certificate generator, bulk certificates, verify certificates, certificate maker, free certificate tool, email dispatch certificates, qr code certificate">
+    <meta name="author" content="CertVerify Pro">
+    <meta name="robots" content="index, follow">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://certverifypro.com/">
+    <meta property="og:title" content="CertVerify Pro | Free Bulk Certificate Generator & Verification Platform">
+    <meta property="og:description"
+        content="Create, Issue, and Verify certificates in seconds. Secure, fast, and free for educational institutions.">
+    <meta property="og:image" content="https://certverifypro.com/assets/og-image.jpg">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://certverifypro.com/">
+    <meta property="twitter:title" content="CertVerify Pro | Free Bulk Certificate Generator">
+    <meta property="twitter:description"
+        content="Create, Issue, and Verify certificates in seconds. Secure, fast, and free.">
+    <meta property="twitter:image" content="https://certverifypro.com/assets/og-image.jpg">
+
+    <title>CertVerify Pro | Best Free Certificate Generator & Verification Platform</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- AOS Animation Library -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+
+    <!-- Schema Markup -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "CertVerify Pro",
+      "applicationCategory": "BusinessApplication",
+      "operatingSystem": "Web",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      "description": "A professional platform to generate, email, and verify bulk certificates for events and institutions."
+    }
+    </script>
+
+    <style>
+        /* ===== GLOBAL VARIABLES ===== */
+        :root {
+            /* Palette: Modern Tech Blue & Vibrant Purple */
+            --primary-blue: #3B82F6;
+            --primary-dark: #2563EB;
+            --primary-light: #60A5FA;
+
+            --secondary-purple: #8B5CF6;
+            --secondary-dark: #7C3AED;
+
+            --accent-teal: #14B8A6;
+
+            --bg-body: #F8FAFC;
+            --bg-card: #FFFFFF;
+            --bg-gradient: linear-gradient(135deg, #FEF3C7 0%, #E0F2FE 100%);
+
+            --text-main: #0F172A;
+            --text-secondary: #475569;
+            --text-light: #94A3B8;
+
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            --shadow-glow: 0 0 20px rgba(59, 130, 246, 0.5);
+
+            --container-width: 1200px;
+            --radius-default: 12px;
+            --radius-lg: 20px;
+        }
+
+        /* ===== RESET & BASE ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            line-height: 1.6;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+            font-family: 'Outfit', sans-serif;
+            line-height: 1.2;
+            color: var(--text-main);
+            letter-spacing: -0.02em;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        ul {
+            list-style: none;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .container {
+            width: 100%;
+            max-width: var(--container-width);
+            margin: 0 auto;
+            padding: 0 1.5rem;
+        }
+
+        .section {
+            padding: 6rem 0;
+            position: relative;
+        }
+
+        /* ===== BUTTONS ===== */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.6rem;
+            padding: 0.8rem 1.8rem;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-size: 1rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-blue), var(--secondary-purple));
+            color: white;
+            border: none;
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
+        }
+
+        .btn-primary:active {
+            transform: scale(0.98);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.5);
+        }
+
+        /* Shine Effect */
+        .btn-primary::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: 0.5s;
+        }
+
+        .btn-primary:hover::after {
+            left: 100%;
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            color: var(--primary-blue);
+            border: 2px solid rgba(59, 130, 246, 0.3);
+        }
+
+        .btn-outline:hover {
+            border-color: var(--primary-blue);
+            background-color: rgba(59, 130, 246, 0.05);
+            transform: translateY(-2px);
+        }
+
+        .btn-white {
+            background-color: white;
+            color: var(--primary-blue);
+            border: none;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .btn-white:hover {
+            background-color: #F8FAFC;
+            transform: translateY(-3px);
+        }
+
+        /* ===== ANIMATIONS ===== */
+        @keyframes float {
+            0% {
+                transform: translateY(0px);
+            }
+
+            50% {
+                transform: translateY(-20px);
+            }
+
+            100% {
+                transform: translateY(0px);
+            }
+        }
+
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7);
+            }
+
+            70% {
+                box-shadow: 0 0 0 10px rgba(59, 130, 246, 0);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(59, 130, 246, 0);
+            }
+        }
+
+        .float {
+            animation: float 6s ease-in-out infinite;
+        }
+
+        /* ===== HEADER ===== */
+        .header {
+            background-color: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            border-bottom: 1px solid rgba(226, 232, 240, 0.6);
+            transition: all 0.3s ease;
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 80px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: var(--text-main);
+            font-family: 'Outfit', sans-serif;
+            background: linear-gradient(135deg, var(--primary-blue), var(--secondary-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 2.5rem;
+            align-items: center;
+        }
+
+        .nav-link {
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            position: relative;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0%;
+            height: 2px;
+            background: var(--primary-blue);
+            transition: width 0.3s ease;
+            border-radius: 2px;
+        }
+
+        .nav-link:hover {
+            color: var(--primary-blue);
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        .mobile-toggle {
+            display: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-main);
+        }
+
+        /* ===== HERO SECTION ===== */
+        .hero {
+            padding-top: 160px;
+            padding-bottom: 8rem;
+            background:
+                radial-gradient(circle at 10% 20%, rgba(59, 130, 246, 0.1) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(139, 92, 246, 0.1) 0%, transparent 40%);
+            overflow: hidden;
+        }
+
+        .hero-content {
+            display: grid;
+            grid-template-columns: 1.1fr 0.9fr;
+            gap: 4rem;
+            align-items: center;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(59, 130, 246, 0.1);
+            color: var(--primary-blue);
+            padding: 0.4rem 1rem;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            border: 1px solid rgba(59, 130, 246, 0.2);
+        }
+
+        .hero-text h1 {
+            font-size: 3.8rem;
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, var(--text-main) 30%, var(--primary-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            line-height: 1.1;
+            letter-spacing: -0.03em;
+        }
+
+        .hero-text p {
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+            margin-bottom: 2.5rem;
+            max-width: 90%;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 1.2rem;
+            flex-wrap: wrap;
+        }
+
+        .hero-image {
+            position: relative;
+            perspective: 1000px;
+        }
+
+        .hero-card {
+            background-color: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-xl);
+            padding: 1rem;
+            transform: rotateY(-10deg) rotateX(5deg);
+            transition: transform 0.5s ease;
+            position: relative;
+            z-index: 10;
+            border: 1px solid rgba(255, 255, 255, 0.6);
+        }
+
+        .hero-card:hover {
+            transform: rotateY(0deg) rotateX(0deg) scale(1.02);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+        }
+
+        .hero-decoration {
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            background: linear-gradient(135deg, var(--accent-teal), var(--primary-blue));
+            border-radius: 50%;
+            top: -50px;
+            right: -50px;
+            z-index: 0;
+            opacity: 0.15;
+            filter: blur(60px);
+        }
+
+        /* ===== TRUST SECTION ===== */
+        .trust-section {
+            background-color: white;
+            padding: 3rem 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .trust-text {
+            text-align: center;
+            color: var(--text-light);
+            font-weight: 600;
+            margin-bottom: 2rem;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 0.1em;
+        }
+
+        .trust-logos {
+            display: flex;
+            justify-content: center;
+            gap: 5rem;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .trust-logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            color: var(--text-light);
+            transition: all 0.3s ease;
+            filter: grayscale(100%);
+            opacity: 0.6;
+            cursor: default;
+        }
+
+        .trust-logo:hover {
+            filter: grayscale(0%);
+            opacity: 1;
+            color: var(--text-main);
+            transform: scale(1.05);
+        }
+
+        /* ===== FEATURES SECTION ===== */
+        .features {
+            background-color: var(--bg-body);
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 5rem;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .section-badge {
+            display: inline-block;
+            padding: 0.4rem 1rem;
+            background-color: #DBEAFE;
+            color: var(--primary-blue);
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+            letter-spacing: 0.05em;
+        }
+
+        .section-title {
+            font-size: 2.8rem;
+            font-weight: 800;
+            margin-bottom: 1.2rem;
+        }
+
+        .section-desc {
+            color: var(--text-secondary);
+            font-size: 1.15rem;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2.5rem;
+        }
+
+        .feature-card {
+            background-color: white;
+            padding: 2.5rem;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 1px solid transparent;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-lg);
+            border-color: rgba(59, 130, 246, 0.2);
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-blue), var(--secondary-purple));
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.4s ease;
+        }
+
+        .feature-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .feature-icon {
+            width: 64px;
+            height: 64px;
+            background: linear-gradient(135deg, #EFF6FF, #DBEAFE);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-blue);
+            font-size: 1.8rem;
+            margin-bottom: 1.8rem;
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover .feature-icon {
+            background: linear-gradient(135deg, var(--primary-blue), var(--secondary-purple));
+            color: white;
+            transform: rotate(5deg);
+        }
+
+        .feature-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 0.8rem;
+        }
+
+        .feature-text {
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+
+        /* ===== HOW IT WORKS ===== */
+        .how-it-works {
+            background-color: white;
+            overflow: hidden;
+        }
+
+        .steps-container {
+            position: relative;
+            display: flex;
+            justify-content: space-between;
+            margin-top: 5rem;
+            gap: 2rem;
+        }
+
+        .steps-container::before {
+            content: '';
+            position: absolute;
+            top: 50px;
+            left: 10%;
+            width: 80%;
+            height: 3px;
+            background: repeating-linear-gradient(to right, #E2E8F0 0%, #E2E8F0 50%, transparent 50%, transparent 100%);
+            background-size: 20px 3px;
+            z-index: 0;
+        }
+
+        .step-item {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            flex: 1;
+        }
+
+        .step-number {
+            width: 100px;
+            height: 100px;
+            background: white;
+            border: 3px solid #E2E8F0;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+            font-size: 1.8rem;
+            font-weight: 800;
+            margin: 0 auto 2rem;
+            transition: all 0.3s ease;
+        }
+
+        .step-item:hover .step-number {
+            border-color: var(--primary-blue);
+            color: var(--primary-blue);
+            transform: scale(1.1);
+            box-shadow: 0 0 0 10px rgba(59, 130, 246, 0.1);
+        }
+
+        .step-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 0.8rem;
+        }
+
+        .step-desc {
+            color: var(--text-secondary);
+        }
+
+        /* ===== PREVIEW SECTION ===== */
+        .preview {
+            background-color: #F0F9FF;
+            position: relative;
+        }
+
+        .preview::after {
+            content: '';
+            position: absolute;
+            right: 0;
+            bottom: 0;
+            width: 300px;
+            height: 300px;
+            background: rgba(59, 130, 246, 0.05);
+            border-radius: 100% 0 0 0;
+            pointer-events: none;
+        }
+
+        .preview-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 5rem;
+            align-items: center;
+        }
+
+        .preview-list {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .preview-item {
+            display: flex;
+            gap: 1.2rem;
+            align-items: flex-start;
+            padding: 1.5rem;
+            background: white;
+            border-radius: 1rem;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.3s ease;
+        }
+
+        .preview-item:hover {
+            transform: translateX(10px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .check-icon {
+            color: var(--success-green);
+            background: linear-gradient(135deg, #DCFCE7, #BBF7D0);
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .check-icon i {
+            font-size: 0.9rem;
+            color: #16A34A;
+        }
+
+        /* ===== CTA SECTION ===== */
+        .cta {
+            background: linear-gradient(135deg, var(--primary-dark), #1e1b4b);
+            color: white;
+            text-align: center;
+            padding: 8rem 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-content {
+            position: relative;
+            z-index: 10;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .cta-title {
+            font-size: 3.5rem;
+            margin-bottom: 1.5rem;
+            color: white;
+        }
+
+        .cta-desc {
+            margin-bottom: 3rem;
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        /* ===== FOOTER ===== */
+        .footer {
+            background-color: #0F172A;
+            color: #94A3B8;
+            padding: 5rem 0 2rem;
+            font-size: 0.95rem;
+        }
+
+        /* Mobile Adjustments */
+        @media (max-width: 768px) {
+            .hero-content {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+
+            .hero-text h1 {
+                font-size: 2.5rem;
+            }
+
+            .hero-buttons {
+                justify-content: center;
+            }
+
+            .step-number {
+                margin: 0 auto 1rem;
+            }
+
+            .steps-container::before {
+                display: none;
+            }
+
+            .steps-container {
+                flex-direction: column;
+                gap: 3rem;
+            }
+
+            .preview-container {
+                grid-template-columns: 1fr;
+            }
+
+            .nav-menu {
+                display: none;
+            }
+
+            .mobile-toggle {
+                display: block;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Header -->
+    <header class="header" id="header">
+        <div class="container nav-container">
+            <a href="index.html" class="logo">
+                <i class="fas fa-certificate"></i> CertVerify
+            </a>
+            <nav class="nav-menu">
+                <a href="#features" class="nav-link">Features</a>
+                <a href="#how-it-works" class="nav-link">How it Works</a>
+                <a href="public-verification.html" class="nav-link">Verify Certificate</a>
+                <a href="admin-login.html" class="btn btn-primary"
+                    style="padding: 0.5rem 1.2rem; min-height: fit-content;">
+                    <i class="fas fa-lock" style="font-size: 0.8rem;"></i> Login
+                </a>
+            </nav>
+            <div class="mobile-toggle">
+                <i class="fas fa-bars"></i>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container hero-content">
+            <div class="hero-text" data-aos="fade-right" data-aos-duration="1000">
+                <div class="hero-badge">
+                    <i class="fas fa-star"></i> #1 Solution for Institutions
+                </div>
+                <h1>Generate & Verify Professional Certificates.</h1>
+                <p>The smartest platform for schools, organizations, and event organizers to issue bulk certificates
+                    with automated emailing and secure verification.</p>
+                <div class="hero-buttons">
+                    <a href="admin-login.html" class="btn btn-primary">
+                        Start Generating Free
+                        <i class="fas fa-arrow-right"></i>
+                    </a>
+                    <a href="public-verification.html" class="btn btn-outline">
+                        <i class="fas fa-qrcode"></i> Verify a Certificate
+                    </a>
+                </div>
+            </div>
+            <div class="hero-image" data-aos="fade-left" data-aos-duration="1200" data-aos-delay="200">
+                <div class="hero-decoration float"></div>
+                <div class="hero-card float">
+                    <img src="https://via.placeholder.com/600x400/F1F5F9/94a3b8?text=Certificate+Preview+Mockup"
+                        alt="Certificate Preview Mockup" style="border-radius: 8px; width: 100%;">
+                    <div style="margin-top: 1rem; display: flex; justify-content: space-between; align-items: center;">
+                        <span
+                            style="font-weight: 600; color: var(--success-green); display:flex; align-items:center; gap:5px;">
+                            <i class="fas fa-check-circle"></i> Verified
+                        </span>
+                        <div style="width: 80px; height: 10px; background-color: #E2E8F0; border-radius: 1rem;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Trust Section -->
+    <section class="trust-section">
+        <div class="container">
+            <div class="trust-text" data-aos="fade-up">Trusted by Leading Institutions</div>
+            <div class="trust-logos" data-aos="fade-up" data-aos-delay="100">
+                <div class="trust-logo"><i class="fas fa-university"></i> HARVARD</div>
+                <div class="trust-logo"><i class="fas fa-graduation-cap"></i> STANFORD</div>
+                <div class="trust-logo"><i class="fab fa-google"></i> GOOGLE</div>
+                <div class="trust-logo"><i class="fab fa-microsoft"></i> MICROSOFT</div>
+                <div class="trust-logo"><i class="fab fa-aws"></i> AWS ED</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="section features" id="features">
+        <div class="container">
+            <div class="section-header" data-aos="fade-up">
+                <span class="section-badge">Why Choose Us</span>
+                <h2 class="section-title">Everything You Need</h2>
+                <p class="section-desc">A complete suite of tools designed to make certificate management effortless,
+                    secure, and professional.</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card" data-aos="fade-up" data-aos-delay="0">
+                    <div class="feature-icon"><i class="fas fa-file-csv"></i></div>
+                    <h3 class="feature-title">Bulk Generation</h3>
+                    <p class="feature-text">Upload a simple CSV file and generate thousands of certificates in minutes.
+                        No complex setup required.</p>
+                </div>
+                <div class="feature-card" data-aos="fade-up" data-aos-delay="100">
+                    <div class="feature-icon"><i class="fas fa-envelope-open-text"></i></div>
+                    <h3 class="feature-title">Smart Dispatch</h3>
+                    <p class="feature-text">Automatically send personalized emails with PDF attachments. We even support
+                        your own Gmail credentials.</p>
+                </div>
+                <div class="feature-card" data-aos="fade-up" data-aos-delay="200">
+                    <div class="feature-icon"><i class="fas fa-qrcode"></i></div>
+                    <h3 class="feature-title">QR Verification</h3>
+                    <p class="feature-text">Every certificate gets a unique, secure QR code that links to a tamper-proof
+                        verification page on your site.</p>
+                </div>
+                <div class="feature-card" data-aos="fade-up" data-aos-delay="300">
+                    <div class="feature-icon"><i class="fas fa-palette"></i></div>
+                    <h3 class="feature-title">Custom Design</h3>
+                    <p class="feature-text">Use our templates or upload your own background. Fully customizable layouts
+                        to match your brand.</p>
+                </div>
+                <div class="feature-card" data-aos="fade-up" data-aos-delay="400">
+                    <div class="feature-icon"><i class="fas fa-shield-alt"></i></div>
+                    <h3 class="feature-title">Secure & Private</h3>
+                    <p class="feature-text">Your data processes locally or on your private instance. We prioritize
+                        security with app-password support.</p>
+                </div>
+                <div class="feature-card" data-aos="fade-up" data-aos-delay="500">
+                    <div class="feature-icon"><i class="fas fa-chart-pie"></i></div>
+                    <h3 class="feature-title">Real Analytics</h3>
+                    <p class="feature-text">Track who received their certificate, who opened the email, and verify
+                        dispatch success rates.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works -->
+    <section class="section how-it-works" id="how-it-works">
+        <div class="container">
+            <div class="section-header" data-aos="fade-up">
+                <span class="section-badge">Workflow</span>
+                <h2 class="section-title">How It Works</h2>
+                <p class="section-desc">Three simple steps to issue thousands of credentials.</p>
+            </div>
+            <div class="steps-container">
+                <div class="step-item" data-aos="fade-up" data-aos-delay="0">
+                    <div class="step-number">1</div>
+                    <h3 class="step-title">Design & Upload</h3>
+                    <p class="step-desc">Choose a template and upload your recipient list via CSV.</p>
+                </div>
+                <div class="step-item" data-aos="fade-up" data-aos-delay="150">
+                    <div class="step-number">2</div>
+                    <h3 class="step-title">Generate</h3>
+                    <p class="step-desc">Our engine creates PDF certificates with unique QR codes.</p>
+                </div>
+                <div class="step-item" data-aos="fade-up" data-aos-delay="300">
+                    <div class="step-number">3</div>
+                    <h3 class="step-title">Dispatch</h3>
+                    <p class="step-desc">Certificates are emailed automatically to all recipients.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Preview/Demo Section -->
+    <section class="section preview">
+        <div class="container preview-container">
+            <div class="preview-text" data-aos="fade-right">
+                <span class="section-badge">Public Portal</span>
+                <h2 class="section-title">Tamper-Proof Verification</h2>
+                <p class="section-desc" style="margin-bottom: 2rem;">Build trust with your students and employees.
+                    Anyone can verify the authenticity of a certificate by scanning the QR code.</p>
+
+                <div class="preview-list">
+                    <div class="preview-item">
+                        <div class="check-icon"><i class="fas fa-check"></i></div>
+                        <div>
+                            <h4>Instant Validation</h4>
+                            <p class="text-secondary">Real-time database lookup confirms validity instantly.</p>
+                        </div>
+                    </div>
+                    <div class="preview-item">
+                        <div class="check-icon"><i class="fas fa-check"></i></div>
+                        <div>
+                            <h4>Metadata Display</h4>
+                            <p class="text-secondary">Shows course details, issue date, and issuing organization.</p>
+                        </div>
+                    </div>
+                    <div class="preview-item">
+                        <div class="check-icon"><i class="fas fa-check"></i></div>
+                        <div>
+                            <h4>Fraud Protection</h4>
+                            <p class="text-secondary">Prevents fake credentials with cryptographic UUIDs.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <a href="public-verification.html" class="btn btn-primary" style="margin-top: 2.5rem;">
+                    Try Verification Demo
+                </a>
+            </div>
+            <div class="preview-image" data-aos="fade-left">
+                <img src="https://via.placeholder.com/600x500/FFFFFF/cbd5e1?text=Verification+Interface+Mockup"
+                    alt="Verification Interface" style="border-radius: 1rem; box-shadow: var(--shadow-xl);">
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta">
+        <div class="container cta-content" data-aos="zoom-in">
+            <h2 class="cta-title">Ready to issue certificates?</h2>
+            <p class="cta-desc">Join hundreds of institutions using CertVerify Pro to streamline their credentialing
+                process today.</p>
+            <div class="hero-buttons" style="justify-content: center;">
+                <a href="admin-login.html" class="btn btn-white">
+                    Login as Admin
+                </a>
+                <a href="public-verification.html" class="btn btn-outline"
+                    style="color: white; border-color: rgba(255,255,255,0.3);">
+                    Check Validity
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div>
+                    <a href="index.html" class="logo"
+                        style="color: white; -webkit-text-fill-color: initial; background: none;">CertVerify Pro</a>
+                    <p class="footer-desc" style="margin-top: 1rem;">The professional standard for digital credentialing
+                        and verification.</p>
+                    <div class="footer-social">
+                        <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-github"></i></a>
+                    </div>
+                </div>
+                <div>
+                    <h4 class="footer-heading">Platform</h4>
+                    <ul class="footer-links">
+                        <li><a href="#features">Features</a></li>
+                        <li><a href="#how-it-works">How it Works</a></li>
+                        <li><a href="certificate-designer.html">Designer</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="footer-heading">Resources</h4>
+                    <ul class="footer-links">
+                        <li><a href="#">Help Center</a></li>
+                        <li><a href="#">API Documentation</a></li>
+                        <li><a href="#">Security</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="footer-heading">Contact</h4>
+                    <ul class="footer-links">
+                        <li>support@certverify.com</li>
+                        <li>+1 (555) 123-4567</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                &copy; 2026 CertVerify Pro. All rights reserved. | Privacy Policy | Terms of Service
+            </div>
+        </div>
+    </footer>
+
+    <!-- AOS Script -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        AOS.init({
+            offset: 100,
+            duration: 800,
+            easing: 'ease-in-out',
+            delay: 100,
+        });
+
+        // Header Scroll Effect
+        window.addEventListener('scroll', function () {
+            const header = document.getElementById('header');
+            if (window.scrollY > 50) {
+                header.style.backgroundColor = 'rgba(255, 255, 255, 0.95)';
+                header.style.boxShadow = '0 4px 6px -1px rgba(0, 0, 0, 0.1)';
+            } else {
+                header.style.backgroundColor = 'rgba(255, 255, 255, 0.85)';
+                header.style.boxShadow = 'none';
+            }
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,1752 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CertVerify Pro | Bulk Upload</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- PapaParse for CSV parsing -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+
+    <!-- PDF.js for PDF Parsing -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
+    <script>
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
+    </script>
+
+    <style>
+        /* ===== GLOBAL DESIGN SYSTEM ===== */
+        :root {
+            /* Color System */
+            --primary-blue: #2563EB;
+            --primary-purple: #7C3AED;
+            --success-green: #10B981;
+            --error-red: #F43F5E;
+            --warning-amber: #F59E0B;
+            --background-light: #F3F4F6;
+            --background-white: #FFFFFF;
+            --text-dark: #1F2937;
+            --text-gray: #6B7280;
+            --border-light: #E5E7EB;
+            --sidebar-bg: #1E293B;
+            --sidebar-text: #F1F5F9;
+
+            /* Typography */
+            --font-primary: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            --font-heading: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+
+            /* Spacing */
+            --spacing-xs: 0.5rem;
+            --spacing-sm: 1rem;
+            --spacing-md: 1.5rem;
+            --spacing-lg: 2rem;
+            --spacing-xl: 3rem;
+
+            /* Shadows */
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+
+            /* Border Radius */
+            --radius-sm: 0.375rem;
+            --radius-md: 0.5rem;
+            --radius-lg: 0.75rem;
+            --radius-xl: 1rem;
+        }
+
+        /* ===== BASE STYLES ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-primary);
+            background-color: var(--background-light);
+            color: var(--text-dark);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        button,
+        input {
+            font-family: inherit;
+            font-size: inherit;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 var(--spacing-md);
+        }
+
+        /* ===== BULK UPLOAD LAYOUT ===== */
+        /* Sidebar */
+        .sidebar {
+            width: 260px;
+            background-color: var(--sidebar-bg);
+            color: var(--sidebar-text);
+            min-height: 100vh;
+            padding: var(--spacing-md) 0;
+            position: fixed;
+            left: 0;
+            top: 0;
+            display: flex;
+            flex-direction: column;
+            z-index: 100;
+        }
+
+        .sidebar-header {
+            padding: 0 var(--spacing-md) var(--spacing-lg);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: var(--spacing-md);
+        }
+
+        .dashboard-logo {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+
+        .logo-icon-sidebar {
+            font-size: 1.75rem;
+            color: var(--primary-blue);
+        }
+
+        .logo-text-sidebar {
+            font-family: var(--font-heading);
+            font-weight: 700;
+            font-size: 1.25rem;
+        }
+
+        .nav-menu {
+            flex: 1;
+            padding: 0 var(--spacing-md);
+        }
+
+        .nav-list {
+            list-style: none;
+        }
+
+        .nav-item {
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            padding: var(--spacing-sm) var(--spacing-md);
+            border-radius: var(--radius-md);
+            transition: all 0.2s ease;
+        }
+
+        .nav-link:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .nav-link.active {
+            background-color: var(--primary-blue);
+            font-weight: 600;
+        }
+
+        .nav-icon {
+            width: 20px;
+            text-align: center;
+        }
+
+        .sidebar-footer {
+            padding: var(--spacing-md);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .back-button {
+            width: 100%;
+            background-color: rgba(255, 255, 255, 0.1);
+            color: var(--sidebar-text);
+            border: none;
+            padding: var(--spacing-sm);
+            border-radius: var(--radius-md);
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--spacing-xs);
+        }
+
+        .back-button:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: 260px;
+            padding: var(--spacing-md);
+        }
+
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--spacing-lg);
+            padding-bottom: var(--spacing-md);
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .page-title {
+            font-family: var(--font-heading);
+            font-size: 1.75rem;
+            font-weight: 700;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: var(--spacing-sm);
+        }
+
+        .primary-btn {
+            background-color: var(--primary-blue);
+            color: white;
+            border: none;
+            padding: var(--spacing-sm) var(--spacing-lg);
+            border-radius: var(--radius-md);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-xs);
+        }
+
+        .primary-btn:hover:not(:disabled) {
+            background-color: #1d4ed8;
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .primary-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .secondary-btn {
+            background-color: white;
+            color: var(--text-dark);
+            border: 1px solid var(--border-light);
+            padding: var(--spacing-sm) var(--spacing-lg);
+            border-radius: var(--radius-md);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-xs);
+        }
+
+        .secondary-btn:hover {
+            background-color: var(--background-light);
+            border-color: var(--text-gray);
+        }
+
+        /* Upload Area */
+        .upload-area {
+            background-color: var(--background-white);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-xl);
+            margin-bottom: var(--spacing-xl);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .upload-header {
+            text-align: center;
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .upload-title {
+            font-family: var(--font-heading);
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .upload-subtitle {
+            color: var(--text-gray);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Drop Zone */
+        .drop-zone {
+            border: 2px dashed var(--border-light);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-xl);
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: var(--spacing-lg);
+            position: relative;
+        }
+
+        .drop-zone:hover {
+            border-color: var(--primary-blue);
+            background-color: rgba(37, 99, 235, 0.05);
+        }
+
+        .drop-zone.dragover {
+            border-color: var(--primary-blue);
+            background-color: rgba(37, 99, 235, 0.1);
+            transform: scale(1.01);
+        }
+
+        .upload-icon {
+            font-size: 3rem;
+            color: var(--primary-blue);
+            margin-bottom: var(--spacing-md);
+        }
+
+        .upload-main-text {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .upload-secondary-text {
+            color: var(--text-gray);
+            margin-bottom: var(--spacing-md);
+        }
+
+        .upload-button {
+            background-color: var(--primary-blue);
+            color: white;
+            border: none;
+            padding: var(--spacing-sm) var(--spacing-lg);
+            border-radius: var(--radius-md);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: var(--spacing-xs);
+        }
+
+        .upload-button:hover {
+            background-color: #1d4ed8;
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        /* Selected File Info */
+        .file-info {
+            background-color: var(--background-light);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-md);
+            margin-top: var(--spacing-md);
+            display: none;
+        }
+
+        .file-info.show {
+            display: block;
+        }
+
+        .file-info-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .file-name {
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+
+        .file-size {
+            color: var(--text-gray);
+            font-size: 0.875rem;
+        }
+
+        .file-progress {
+            margin-top: var(--spacing-sm);
+        }
+
+        .progress-bar {
+            height: 8px;
+            background-color: var(--border-light);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .progress-fill {
+            height: 100%;
+            background-color: var(--primary-blue);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .progress-text {
+            font-size: 0.875rem;
+            color: var(--text-gray);
+            display: flex;
+            justify-content: space-between;
+        }
+
+        /* Preview Area */
+        .preview-area {
+            background-color: var(--background-white);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-xl);
+            margin-bottom: var(--spacing-xl);
+            box-shadow: var(--shadow-sm);
+            display: none;
+        }
+
+        .preview-area.show {
+            display: block;
+        }
+
+        .preview-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .preview-title {
+            font-family: var(--font-heading);
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        .record-count {
+            background-color: var(--primary-blue);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 999px;
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+
+        /* Preview Table */
+        .preview-table-container {
+            overflow-x: auto;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-light);
+        }
+
+        .preview-table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 800px;
+        }
+
+        .preview-table thead {
+            background-color: var(--background-light);
+        }
+
+        .preview-table th {
+            text-align: left;
+            padding: var(--spacing-md);
+            font-weight: 600;
+            font-size: 0.875rem;
+            color: var(--text-gray);
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .preview-table td {
+            padding: var(--spacing-sm) var(--spacing-md);
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .preview-table tbody tr:hover {
+            background-color: rgba(37, 99, 235, 0.02);
+        }
+
+        /* Field Mapping */
+        .mapping-area {
+            background-color: var(--background-white);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-xl);
+            margin-bottom: var(--spacing-xl);
+            box-shadow: var(--shadow-sm);
+            display: none;
+        }
+
+        .mapping-area.show {
+            display: block;
+        }
+
+        .mapping-header {
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .mapping-title {
+            font-family: var(--font-heading);
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .mapping-subtitle {
+            color: var(--text-gray);
+        }
+
+        .mapping-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: var(--spacing-md);
+        }
+
+        .mapping-field {
+            padding: var(--spacing-md);
+            background-color: var(--background-light);
+            border-radius: var(--radius-md);
+        }
+
+        .field-name {
+            font-weight: 600;
+            margin-bottom: var(--spacing-xs);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-xs);
+        }
+
+        .field-placeholder {
+            font-family: monospace;
+            font-size: 0.875rem;
+            color: var(--primary-blue);
+            background-color: rgba(37, 99, 235, 0.1);
+            padding: 0.125rem 0.5rem;
+            border-radius: var(--radius-sm);
+            margin-left: auto;
+        }
+
+        .field-select {
+            width: 100%;
+            padding: var(--spacing-sm);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-md);
+            font-size: 0.875rem;
+            margin-top: var(--spacing-sm);
+            transition: all 0.2s ease;
+        }
+
+        .field-select:focus {
+            outline: none;
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        /* Validation Area */
+        .validation-area {
+            background-color: var(--background-white);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-xl);
+            margin-bottom: var(--spacing-xl);
+            box-shadow: var(--shadow-sm);
+            display: none;
+        }
+
+        .validation-area.show {
+            display: block;
+        }
+
+        .validation-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .validation-title {
+            font-family: var(--font-heading);
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        .validation-stats {
+            display: flex;
+            gap: var(--spacing-lg);
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .stat-label {
+            font-size: 0.875rem;
+            color: var(--text-gray);
+        }
+
+        .valid-stat .stat-value {
+            color: var(--success-green);
+        }
+
+        .warning-stat .stat-value {
+            color: var(--warning-amber);
+        }
+
+        .error-stat .stat-value {
+            color: var(--error-red);
+        }
+
+        .validation-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .validation-table th {
+            text-align: left;
+            padding: var(--spacing-sm) var(--spacing-md);
+            font-weight: 600;
+            font-size: 0.875rem;
+            color: var(--text-gray);
+            border-bottom: 1px solid var(--border-light);
+            background-color: var(--background-light);
+        }
+
+        .validation-table td {
+            padding: var(--spacing-sm) var(--spacing-md);
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .duplicate-row {
+            background-color: rgba(244, 63, 94, 0.05);
+        }
+
+        .error-row {
+            background-color: rgba(245, 158, 11, 0.05);
+        }
+
+        .status-cell {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-xs);
+        }
+
+        .status-valid {
+            color: var(--success-green);
+        }
+
+        .status-warning {
+            color: var(--warning-amber);
+        }
+
+        .status-error {
+            color: var(--error-red);
+        }
+
+        /* Action Buttons */
+        .action-area {
+            display: flex;
+            justify-content: flex-end;
+            gap: var(--spacing-sm);
+            margin-top: var(--spacing-xl);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .sidebar {
+                width: 80px;
+            }
+
+            .logo-text-sidebar,
+            .nav-text,
+            .back-text {
+                display: none;
+            }
+
+            .dashboard-logo {
+                justify-content: center;
+            }
+
+            .nav-link {
+                justify-content: center;
+                padding: var(--spacing-sm);
+            }
+
+            .nav-icon {
+                width: auto;
+            }
+
+            .main-content {
+                margin-left: 80px;
+            }
+
+            .mapping-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .top-bar {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: var(--spacing-md);
+            }
+
+            .action-buttons {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .upload-area,
+            .preview-area,
+            .mapping-area,
+            .validation-area {
+                padding: var(--spacing-lg);
+            }
+
+            .validation-stats {
+                flex-direction: column;
+                gap: var(--spacing-md);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .main-content {
+                padding: var(--spacing-sm);
+            }
+
+            .drop-zone {
+                padding: var(--spacing-lg);
+            }
+
+            .upload-icon {
+                font-size: 2rem;
+            }
+
+            .upload-main-text {
+                font-size: 1.125rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Sidebar Navigation -->
+    <nav class="sidebar">
+        <div class="sidebar-header">
+            <div class="dashboard-logo">
+                <i class="fas fa-certificate logo-icon-sidebar"></i>
+                <span class="logo-text-sidebar">CertVerify</span>
+            </div>
+        </div>
+
+        <div class="nav-menu">
+            <ul class="nav-list">
+                <li class="nav-item">
+                    <a href="admin-dashboard.html" class="nav-link">
+                        <i class="fas fa-chart-line nav-icon"></i>
+                        <span class="nav-text">Dashboard</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="certificate-designer.html" class="nav-link">
+                        <i class="fas fa-paint-brush nav-icon"></i>
+                        <span class="nav-text">Create Design</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="bulk-upload.html" class="nav-link active">
+                        <i class="fas fa-file-upload nav-icon"></i>
+                        <span class="nav-text">Bulk Upload</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="generation-engine.html" class="nav-link">
+                        <i class="fas fa-cogs nav-icon"></i>
+                        <span class="nav-text">Generation</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="dispatch-status.html" class="nav-link">
+                        <i class="fas fa-paper-plane nav-icon"></i>
+                        <span class="nav-text">Dispatch Status</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <i class="fas fa-certificate nav-icon"></i>
+                        <span class="nav-text">Certificates</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <i class="fas fa-cog nav-icon"></i>
+                        <span class="nav-text">Settings</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <div class="sidebar-footer">
+            <button class="back-button" id="backBtn">
+                <i class="fas fa-arrow-left"></i>
+                <span class="back-text">Back to Dashboard</span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Top Bar -->
+        <div class="top-bar">
+            <h1 class="page-title">Bulk Upload Certificates</h1>
+            <div class="action-buttons">
+                <button class="secondary-btn" id="downloadTemplateBtn">
+                    <i class="fas fa-download"></i>
+                    Download Template
+                </button>
+                <button class="primary-btn" id="proceedBtn" disabled>
+                    <i class="fas fa-arrow-right"></i>
+                    Proceed to Generate
+                </button>
+            </div>
+        </div>
+
+        <!-- Upload Area -->
+        <div class="upload-area" id="uploadArea">
+            <div class="upload-header">
+                <h2 class="upload-title">Upload CSV File</h2>
+                <p class="upload-subtitle">
+                    Upload a CSV file containing recipient data. Ensure your file includes columns for Name, Email, and
+                    other required fields.
+                </p>
+            </div>
+
+            <div class="drop-zone" id="dropZone">
+                <i class="fas fa-file-csv upload-icon"></i>
+                <h3 class="upload-title">Upload Participant Data</h3>
+                <p class="upload-text">Drag & drop your CSV or PDF file here or click to browse</p>
+                <p class="upload-hint">Supported formats: .csv, .pdf</p>
+                <button class="secondary-btn" onclick="document.getElementById('fileInput').click()">
+                    Browse Files
+                </button>
+                <input type="file" id="fileInput" accept=".csv, .pdf" style="display: none;">
+            </div>
+
+            <div class="file-info" id="fileInfo">
+                <div class="file-info-header">
+                    <div class="file-name">
+                        <i class="fas fa-file-csv"></i>
+                        <span id="fileName">No file selected</span>
+                    </div>
+                    <div class="file-size" id="fileSize">-</div>
+                </div>
+                <div class="file-progress">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill"></div>
+                    </div>
+                    <div class="progress-text">
+                        <span>Uploading...</span>
+                        <span id="progressPercent">0%</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Preview Area -->
+        <div class="preview-area" id="previewArea">
+            <div class="preview-header">
+                <h3 class="preview-title">Data Preview</h3>
+                <span class="record-count" id="recordCount">0 records</span>
+            </div>
+
+            <div class="preview-table-container">
+                <table class="preview-table" id="previewTable">
+                    <thead id="previewTableHeader">
+                        <!-- Headers will be populated by JS -->
+                    </thead>
+                    <tbody id="previewTableBody">
+                        <!-- Data will be populated by JS -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Field Mapping Area -->
+        <div class="mapping-area" id="mappingArea">
+            <div class="mapping-header">
+                <h3 class="mapping-title">Map CSV Columns to Certificate Fields</h3>
+                <p class="mapping-subtitle">
+                    Match your CSV columns with the certificate template fields. Required fields are marked with *.
+                </p>
+            </div>
+
+            <div class="mapping-grid" id="mappingGrid">
+                <!-- Mapping fields will be populated by JS -->
+            </div>
+        </div>
+
+        <!-- Validation Area -->
+        <div class="validation-area" id="validationArea">
+            <div class="validation-header">
+                <h3 class="validation-title">Data Validation Results</h3>
+                <div class="validation-stats">
+                    <div class="stat-item valid-stat">
+                        <div class="stat-value" id="validCount">0</div>
+                        <div class="stat-label">Valid</div>
+                    </div>
+                    <div class="stat-item warning-stat">
+                        <div class="stat-value" id="warningCount">0</div>
+                        <div class="stat-label">Warnings</div>
+                    </div>
+                    <div class="stat-item error-stat">
+                        <div class="stat-value" id="errorCount">0</div>
+                        <div class="stat-label">Errors</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="preview-table-container">
+                <table class="validation-table" id="validationTable">
+                    <thead>
+                        <tr>
+                            <th>Row</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Status</th>
+                            <th>Issues</th>
+                        </tr>
+                    </thead>
+                    <tbody id="validationTableBody">
+                        <!-- Validation results will be populated by JS -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="action-area">
+            <button class="secondary-btn" id="resetBtn">
+                <i class="fas fa-redo"></i>
+                Reset
+            </button>
+            <button class="primary-btn" id="generateBtn" disabled>
+                <i class="fas fa-play"></i>
+                Start Generation
+            </button>
+        </div>
+    </main>
+
+    <script>
+        // DOM Elements
+        const uploadArea = document.getElementById('uploadArea');
+        const dropZone = document.getElementById('dropZone');
+        const fileInput = document.getElementById('fileInput');
+        const browseButton = document.getElementById('browseButton');
+        const fileInfo = document.getElementById('fileInfo');
+        const fileName = document.getElementById('fileName');
+        const fileSize = document.getElementById('fileSize');
+        const progressFill = document.getElementById('progressFill');
+        const progressPercent = document.getElementById('progressPercent');
+
+        const previewArea = document.getElementById('previewArea');
+        const previewTableHeader = document.getElementById('previewTableHeader');
+        const previewTableBody = document.getElementById('previewTableBody');
+        const recordCount = document.getElementById('recordCount');
+
+        const mappingArea = document.getElementById('mappingArea');
+        const mappingGrid = document.getElementById('mappingGrid');
+
+        const validationArea = document.getElementById('validationArea');
+        const validationTableBody = document.getElementById('validationTableBody');
+        const validCount = document.getElementById('validCount');
+        const warningCount = document.getElementById('warningCount');
+        const errorCount = document.getElementById('errorCount');
+
+        const downloadTemplateBtn = document.getElementById('downloadTemplateBtn');
+        const proceedBtn = document.getElementById('proceedBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const generateBtn = document.getElementById('generateBtn');
+        const backBtn = document.getElementById('backBtn');
+
+        // State variables
+        let csvData = [];
+        let csvHeaders = [];
+        let fieldMapping = {};
+        let validationResults = [];
+
+        // Certificate template fields (these would come from the saved design)
+        const templateFields = [
+            { id: 'name', label: 'Full Name *', placeholder: '{Name}', required: true },
+            { id: 'email', label: 'Email Address *', placeholder: '{Email}', required: true },
+            { id: 'course', label: 'Course Name', placeholder: '{Course}', required: false },
+            { id: 'date', label: 'Completion Date', placeholder: '{Date}', required: false },
+            { id: 'certId', label: 'Certificate ID', placeholder: '{CertID}', required: false },
+            { id: 'organization', label: 'Organization', placeholder: '{Organization}', required: false }
+        ];
+
+        // Sample existing emails for duplicate check
+        const existingEmails = [
+            'john.doe@example.com',
+            'jane.smith@example.com',
+            'alex.johnson@example.com'
+        ];
+
+        // Initialize
+        function init() {
+            try {
+                console.log("Initializing Bulk Upload...");
+
+                // Check dependencies
+                if (typeof Papa === 'undefined') {
+                    console.error("Papa Parse library not loaded!");
+                    alert("Critical Error: CSV Parser library not loaded. Please check your internet connection.");
+                    return;
+                }
+
+                // Load template fields from design
+                loadTemplateFields();
+
+                setupEventListeners();
+                console.log("Bulk Upload initialized successfully");
+            } catch (e) {
+                console.error("Initialization error:", e);
+                alert("Initialization failed: " + e.message);
+            }
+        }
+
+        // Load fields from saved certificate design
+        function loadTemplateFields() {
+            try {
+                const savedDesign = localStorage.getItem('certificateDesign');
+                if (savedDesign) {
+                    const design = JSON.parse(savedDesign);
+                    if (design.textElements) {
+                        const customFields = new Set();
+                        design.textElements.forEach(element => {
+                            if (element.isPlaceholder) {
+                                // Extract content between { and }
+                                const match = element.text.match(/\{([^}]+)\}/);
+                                if (match && match[1]) {
+                                    const fieldName = match[1].trim();
+                                    // Helper function to check if field exists
+                                    const exists = templateFields.some(f => f.id.toLowerCase() === fieldName.toLowerCase());
+                                    if (!exists) {
+                                        templateFields.push({
+                                            id: fieldName.toLowerCase(), // Store ID as lowercase for consistency
+                                            label: fieldName,
+                                            placeholder: `{${fieldName}}`,
+                                            required: false
+                                        });
+                                    }
+                                }
+                            }
+                        });
+                        console.log("Updated template fields:", templateFields);
+                    }
+                }
+            } catch (e) {
+                console.error("Error loading template fields:", e);
+            }
+        }
+
+        // Set up event listeners
+        function setupEventListeners() {
+            try {
+                // File input
+                if (browseButton) browseButton.addEventListener('click', () => fileInput.click());
+                if (fileInput) fileInput.addEventListener('change', handleFileSelect);
+
+                // Drag and drop
+                if (dropZone) {
+                    dropZone.addEventListener('dragover', handleDragOver);
+                    dropZone.addEventListener('dragleave', handleDragLeave);
+                    dropZone.addEventListener('drop', handleFileDrop);
+                }
+
+                // Buttons
+                if (downloadTemplateBtn) downloadTemplateBtn.addEventListener('click', downloadTemplate);
+                if (proceedBtn) proceedBtn.addEventListener('click', proceedToMapping);
+                if (resetBtn) resetBtn.addEventListener('click', resetAll);
+                if (generateBtn) generateBtn.addEventListener('click', startGeneration);
+                if (backBtn) backBtn.addEventListener('click', () => {
+                    window.location.href = 'admin-dashboard.html';
+                });
+            } catch (e) {
+                console.error("Event listener setup failed:", e);
+            }
+        }
+
+        // Handle drag over
+        function handleDragOver(e) {
+            e.preventDefault();
+            dropZone.classList.add('dragover');
+        }
+
+        // Handle drag leave
+        function handleDragLeave(e) {
+            e.preventDefault();
+            dropZone.classList.remove('dragover');
+        }
+
+        // Handle file drop
+        function handleFileDrop(e) {
+            e.preventDefault();
+            dropZone.classList.remove('dragover');
+            const files = e.dataTransfer.files;
+            handleFiles(files);
+        }
+
+        // Handle file select via browse
+        function handleFileSelect(e) {
+            const files = e.target.files;
+            handleFiles(files);
+        }
+
+        // Simulate upload progress (REMOVED - using real logic now)
+
+        // Update file info display
+        function updateFileInfo(file) {
+            fileName.textContent = file.name;
+            fileSize.textContent = formatFileSize(file.size);
+            fileInfo.classList.add('show');
+            // Reset progress
+            progressFill.style.width = '0%';
+            progressPercent.textContent = '0%';
+        }
+
+        // Show loading state
+        function showLoading(isLoading) {
+            if (isLoading) {
+                document.body.style.cursor = 'wait';
+                progressFill.style.width = '50%';
+                progressPercent.textContent = 'Processing...';
+            } else {
+                document.body.style.cursor = 'default';
+                progressFill.style.width = '100%';
+                progressPercent.textContent = 'Complete';
+            }
+        }
+
+        // Handle File Selection
+        function handleFiles(files) {
+            if (files.length > 0) {
+                const file = files[0];
+                const fileExtension = file.name.split('.').pop().toLowerCase();
+
+                if (fileExtension === 'csv') {
+                    processCSV(file);
+                } else if (fileExtension === 'pdf') {
+                    processPDF(file);
+                } else {
+                    alert('Please upload a valid CSV or PDF file.');
+                }
+            }
+        }
+
+        // Process CSV File
+        function processCSV(file) {
+            updateFileInfo(file);
+            showLoading(true);
+
+            Papa.parse(file, {
+                header: true,
+                skipEmptyLines: true,
+                complete: function (results) {
+                    if (results.data && results.data.length > 0) {
+                        currentFile = file;
+                        csvData = results.data;
+                        csvHeaders = results.meta.fields;
+                        processData(csvData, csvHeaders);
+                    } else {
+                        alert('The CSV file appears to be empty or invalid.');
+                        showLoading(false);
+                    }
+                },
+                error: function (error) {
+                    console.error('Error parsing CSV:', error);
+                    alert('Error parsing CSV file: ' + error.message);
+                    showLoading(false);
+                }
+            });
+        }
+
+        // Process PDF File
+        function processPDF(file) {
+            updateFileInfo(file);
+            showLoading(true);
+
+            const fileReader = new FileReader();
+            fileReader.onload = function () {
+                const typedarray = new Uint8Array(this.result);
+                pdfjsLib.getDocument(typedarray).promise.then(async function (pdf) {
+                    let fullTextData = [];
+                    // Iterate through all pages
+                    for (let i = 1; i <= pdf.numPages; i++) {
+                        const page = await pdf.getPage(i);
+                        const textContent = await page.getTextContent();
+
+                        // Group text items by Y-coordinate (rows)
+                        const rows = {};
+                        const tolerance = 10; // Increased tolerance for better grouping
+                        textContent.items.forEach(item => {
+                            const y = item.transform[5];
+                            const x = item.transform[4];
+                            const text = item.str.trim();
+                            if (text.length > 0) {
+                                // Find closest existing row within tolerance
+                                let rowKey = Object.keys(rows).find(key => Math.abs(parseFloat(key) - y) < tolerance);
+                                if (!rowKey) {
+                                    rowKey = y;
+                                    rows[rowKey] = [];
+                                }
+                                rows[rowKey].push({ x, text });
+                            }
+                        });
+
+                        // Sort rows by Y (descending - top to bottom) and columns by X (ascending - left to right)
+                        const sortedRows = Object.keys(rows)
+                            .sort((a, b) => parseFloat(b) - parseFloat(a))
+                            .map(key => rows[key].sort((a, b) => a.x - b.x).map(item => item.text));
+
+                        fullTextData = fullTextData.concat(sortedRows);
+                    }
+
+                    if (fullTextData.length > 0) {
+                        // Smart Header Detection
+                        let headerRowIndex = 0;
+                        let maxScore = -1;
+
+                        // Look for a row that looks like a header
+                        fullTextData.forEach((row, index) => {
+                            // Heuristic: Header usually contains "Name", "Email", "Date", "Sr"
+                            let score = 0;
+                            const rowText = row.join(' ').toLowerCase();
+                            if (rowText.includes('name')) score += 2;
+                            if (rowText.includes('email') || rowText.includes('mail')) score += 2;
+                            if (rowText.includes('date')) score += 1;
+                            if (rowText.includes('sr') || rowText.includes('no')) score += 1;
+
+                            // Favor rows with more columns, but prioritize keywords
+                            if (row.length > 1) score += 1;
+
+                            if (score > maxScore) {
+                                maxScore = score;
+                                headerRowIndex = index;
+                            }
+                        });
+
+                        // Fallback: If no good header found, use the row with most columns
+                        if (maxScore <= 1) {
+                            let maxCols = 0;
+                            fullTextData.forEach((row, index) => {
+                                if (row.length > maxCols) {
+                                    maxCols = row.length;
+                                    headerRowIndex = index;
+                                }
+                            });
+                        }
+
+                        const headers = fullTextData[headerRowIndex];
+                        console.log("Detected Header Row:", headers);
+
+                        // Extract data rows (after the header)
+                        // Note: Data rows must ideally have similar column count, but we'll include all sub-sequent rows
+                        // and try to map them by index.
+                        const dataObjects = fullTextData.slice(headerRowIndex + 1).map(row => {
+                            const obj = {};
+                            headers.forEach((header, index) => {
+                                // Map by index. If data row has fewer cols, it gets empty string.
+                                // If data row has more cols, extras are ignored (or could be appended).
+                                obj[header] = row[index] || '';
+                            });
+                            // Filter out completely empty rows
+                            if (Object.values(obj).some(v => v.trim() !== '')) {
+                                return obj;
+                            }
+                            return null;
+                        }).filter(item => item !== null);
+
+                        if (dataObjects.length > 0) {
+                            currentFile = file;
+                            csvData = dataObjects;
+                            csvHeaders = headers;
+                            processData(csvData, csvHeaders);
+                        } else {
+                            alert('Found headers but no data rows in PDF.');
+                            showLoading(false);
+                        }
+                    } else {
+                        alert('Could not extract any text from this PDF.');
+                        showLoading(false);
+                    }
+                }).catch(err => {
+                    console.error('PDF parsing error:', err);
+                    alert('Error parsing PDF: ' + err.message);
+                    showLoading(false);
+                });
+            };
+            fileReader.readAsArrayBuffer(file);
+        }
+
+        // Common Data Processing
+        function processData(data, headers) {
+            populateMappingDropdowns(headers);
+            autoMapFields(headers);
+            showPreview();
+            runValidation();
+            uploadArea.style.display = 'none';
+            previewArea.style.display = 'block';
+            proceedToMapping();
+            showLoading(false);
+        }
+
+        // Show data preview
+        function showPreview() {
+            recordCount.textContent = `${csvData.length} records`;
+            previewTableHeader.innerHTML = '';
+            previewTableBody.innerHTML = '';
+
+            const headerRow = document.createElement('tr');
+            csvHeaders.forEach(header => {
+                const th = document.createElement('th');
+                th.textContent = header;
+                headerRow.appendChild(th);
+            });
+            previewTableHeader.appendChild(headerRow);
+
+            const displayData = csvData.slice(0, 5);
+            displayData.forEach(row => {
+                const tr = document.createElement('tr');
+                csvHeaders.forEach(header => {
+                    const td = document.createElement('td');
+                    td.textContent = row[header] || '';
+                    tr.appendChild(td);
+                });
+                previewTableBody.appendChild(tr);
+            });
+
+            if (csvData.length > 5) {
+                const tr = document.createElement('tr');
+                const td = document.createElement('td');
+                td.colSpan = csvHeaders.length;
+                td.textContent = `... and ${csvData.length - 5} more rows`;
+                td.style.textAlign = 'center';
+                td.style.padding = '1rem';
+                tr.appendChild(td);
+                previewTableBody.appendChild(tr);
+            }
+            previewArea.classList.add('show');
+        }
+
+        // Proceed to field mapping area
+        function proceedToMapping() {
+            autoCleanupData();
+            mappingArea.classList.add('show');
+            createMappingFields();
+            mappingArea.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Auto-cleanup data
+        function autoCleanupData() {
+            csvData = csvData.map(row => {
+                const cleanedRow = {};
+                Object.keys(row).forEach(key => {
+                    let value = row[key];
+                    if (typeof value === 'string') {
+                        value = value.trim();
+                        if (key.toLowerCase().includes('name')) {
+                            value = value.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ');
+                        }
+                    }
+                    cleanedRow[key] = value;
+                });
+                return cleanedRow;
+            });
+        }
+
+        // Populate mapping dropdowns (Wrapper for createMappingFields)
+        function populateMappingDropdowns(headers) {
+            // We can just rely on createMappingFields which uses global csvHeaders
+            // But to be safe and explicit, let's update global csvHeaders just in case
+            csvHeaders = headers;
+            // The UI creation happens in createMappingFields when needed
+        }
+
+        // Auto-map fields
+        function autoMapFields(headers) {
+            // This logic was partly inside createMappingFields, but let's make it explicit
+            // so it runs before the UI is shown for the first time
+            templateFields.forEach(field => {
+                // Try exact match
+                let match = headers.find(h => h.toLowerCase() === field.id.toLowerCase());
+
+                // Try label match
+                if (!match) {
+                    match = headers.find(h => h.toLowerCase() === field.label.toLowerCase());
+                }
+
+                // Try common name variations
+                if (!match && field.id === 'name') {
+                    match = headers.find(h => h.toLowerCase().includes('name') || h.toLowerCase().includes('student'));
+                }
+                if (!match && field.id === 'email') {
+                    match = headers.find(h => h.toLowerCase().includes('email') || h.toLowerCase().includes('mail'));
+                }
+
+                if (match) {
+                    fieldMapping[field.id] = match;
+                }
+            });
+        }
+
+        // Create mapping fields UI
+        function createMappingFields() {
+            // ... existing implementation ... 
+            mappingGrid.innerHTML = '';
+            templateFields.forEach(field => {
+                const mappingField = document.createElement('div');
+                mappingField.className = 'mapping-field';
+
+                const fieldName = document.createElement('div');
+                fieldName.className = 'field-name';
+
+                const fieldLabel = document.createElement('span');
+                fieldLabel.textContent = field.label;
+                fieldName.appendChild(fieldLabel);
+
+                if (field.required) {
+                    const req = document.createElement('span');
+                    req.textContent = '*';
+                    req.style.color = 'var(--error-red)';
+                    fieldName.appendChild(req);
+                }
+
+                const select = document.createElement('select');
+                select.className = 'field-select';
+                select.id = `map-${field.id}`;
+
+                const defOpt = document.createElement('option');
+                defOpt.value = '';
+                defOpt.textContent = '-- Select CSV Column --';
+                select.appendChild(defOpt);
+
+                csvHeaders.forEach(header => {
+                    const opt = document.createElement('option');
+                    opt.value = header;
+                    opt.textContent = header;
+
+                    // Use existing mapping if available
+                    if (fieldMapping[field.id] === header) {
+                        opt.selected = true;
+                    }
+                    select.appendChild(opt);
+                });
+
+                select.addEventListener('change', (e) => {
+                    fieldMapping[field.id] = e.target.value || null;
+                    validateMappings();
+                });
+
+                mappingField.appendChild(fieldName);
+                mappingField.appendChild(select);
+                mappingGrid.appendChild(mappingField);
+            });
+            validateMappings();
+        }
+
+        // Validate field mappings
+        function validateMappings() {
+            const allMapped = templateFields
+                .filter(field => field.required)
+                .every(field => fieldMapping[field.id]);
+
+            if (allMapped) {
+                // Show validation area
+                validationArea.classList.add('show');
+
+                // Run validation
+                runValidation();
+
+                // Scroll to validation area
+                validationArea.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        // Run data validation
+        function runValidation() {
+            validationResults = [];
+            const emailSet = new Set();
+            const emailCounts = {};
+
+            // First pass: Count email occurrences to detect duplicates within file
+            csvData.forEach(row => {
+                const email = (row[fieldMapping.email] || '').trim().toLowerCase();
+                if (email) {
+                    emailCounts[email] = (emailCounts[email] || 0) + 1;
+                }
+            });
+
+            csvData.forEach((row, index) => {
+                const result = {
+                    row: index + 1,
+                    name: (row[fieldMapping.name] || '').trim(),
+                    email: (row[fieldMapping.email] || '').trim(),
+                    status: 'valid',
+                    issues: []
+                };
+
+                // Normalization (Title Case Name)
+                if (result.name) {
+                    result.name = result.name.toLowerCase().split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+                }
+
+                // Check required fields
+                if (!result.name) {
+                    result.status = 'error';
+                    result.issues.push('Missing name');
+                }
+
+                if (!result.email) {
+                    result.status = 'error';
+                    result.issues.push('Missing email');
+                } else if (!isValidEmail(result.email)) {
+                    result.status = 'error';
+                    result.issues.push('Invalid email format');
+                }
+
+                // Check for duplicates within file
+                if (result.email && emailCounts[result.email.toLowerCase()] > 1) {
+                    result.status = 'warning';
+                    result.issues.push('Duplicate in file');
+                }
+
+                // Check for duplicates against existing DB (mock check)
+                if (existingEmails.includes(result.email.toLowerCase())) {
+                    result.status = 'warning';
+                    result.issues.push('Already in system');
+                }
+
+                // Check for generic warnings
+                if (result.email && result.email.includes('example.com')) {
+                    // Example.com is fine for testing, but maybe warn if it's a real deployment
+                    // result.issues.push('Example domain');
+                }
+
+                validationResults.push(result);
+            });
+
+            // Update validation table
+            updateValidationTable();
+
+            // Update stats
+            updateValidationStats();
+
+            // Enable generate button only if no errors (warnings are OK)
+            const hasErrors = validationResults.some(r => r.status === 'error');
+            generateBtn.disabled = hasErrors;
+        }
+
+        function isValidEmail(email) {
+            return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+        }
+
+        // Update validation table
+        function updateValidationTable() {
+            validationTableBody.innerHTML = '';
+
+            validationResults.forEach(result => {
+                const tr = document.createElement('tr');
+                if (result.status === 'error') tr.classList.add('error-row');
+                if (result.status === 'warning') tr.classList.add('duplicate-row');
+
+                // Row number
+                const tdRow = document.createElement('td');
+                tdRow.textContent = result.row;
+                tr.appendChild(tdRow);
+
+                // Name
+                const tdName = document.createElement('td');
+                tdName.textContent = result.name || '-';
+                tr.appendChild(tdName);
+
+                // Email
+                const tdEmail = document.createElement('td');
+                tdEmail.textContent = result.email || '-';
+                tr.appendChild(tdEmail);
+
+                // Status
+                const tdStatus = document.createElement('td');
+                tdStatus.className = 'status-cell';
+
+                let icon, text;
+                switch (result.status) {
+                    case 'valid':
+                        icon = 'fa-check-circle';
+                        text = 'Valid';
+                        tdStatus.classList.add('status-valid');
+                        break;
+                    case 'warning':
+                        icon = 'fa-exclamation-triangle';
+                        text = 'Warning';
+                        tdStatus.classList.add('status-warning');
+                        break;
+                    case 'error':
+                        icon = 'fa-times-circle';
+                        text = 'Error';
+                        tdStatus.classList.add('status-error');
+                        break;
+                }
+
+                tdStatus.innerHTML = `<i class="fas ${icon}"></i> ${text}`;
+                tr.appendChild(tdStatus);
+
+                // Issues
+                const tdIssues = document.createElement('td');
+                tdIssues.textContent = result.issues.join(', ') || 'None';
+                tr.appendChild(tdIssues);
+
+                validationTableBody.appendChild(tr);
+            });
+        }
+
+        // Update validation stats
+        function updateValidationStats() {
+            const valid = validationResults.filter(r => r.status === 'valid').length;
+            const warnings = validationResults.filter(r => r.status === 'warning').length;
+            const errors = validationResults.filter(r => r.status === 'error').length;
+
+            validCount.textContent = valid;
+            warningCount.textContent = warnings;
+            errorCount.textContent = errors;
+        }
+
+        // Start generation process
+        function startGeneration() {
+            // Prepare data for generation
+            // Prepare data for generation
+            // Prepare data for generation using the VALIDATED and NORMALIZED results
+            const generationData = validationResults.map(result => {
+                // Find original row to get other unmapped fields if needed, 
+                // but prioritize the normalized name/email from validation
+                const originalRow = csvData[result.row - 1];
+                const data = {};
+
+                // Mapped fields
+                templateFields.forEach(field => {
+                    if (field.id === 'name') {
+                        data.name = result.name;
+                    } else if (field.id === 'email') {
+                        data.email = result.email;
+                    } else if (fieldMapping[field.id]) {
+                        data[field.id] = originalRow[fieldMapping[field.id]] || '';
+                    } else {
+                        // Auto-match fallback
+                        const matchingHeader = csvHeaders.find(h => h.toLowerCase() === field.label.toLowerCase());
+                        if (matchingHeader) {
+                            data[field.id] = originalRow[matchingHeader];
+                        }
+                    }
+                });
+                return data;
+            });
+
+            // Save to localStorage for generation engine
+            localStorage.setItem('bulkGenerationData', JSON.stringify(generationData));
+            localStorage.setItem('fieldMapping', JSON.stringify(fieldMapping));
+
+            // Redirect to generation engine
+            window.location.href = 'generation-engine.html';
+        }
+
+        // Download CSV template
+        function downloadTemplate() {
+            const headers = templateFields.map(f => f.label.replace(' *', ''));
+            const sampleData = [
+                ['John Doe', 'john.doe@example.com', 'Web Development Bootcamp', '2023-10-15', 'CERT-001', 'Tech Academy'],
+                ['Jane Smith', 'jane.smith@example.com', 'Data Science Fundamentals', '2023-10-16', 'CERT-002', 'Tech Academy'],
+                ['Alex Johnson', 'alex.j@example.com', 'UX Design Masterclass', '2023-10-17', 'CERT-003', 'Design Institute']
+            ];
+
+            let csvContent = headers.join(',') + '\n';
+            sampleData.forEach(row => {
+                csvContent += row.join(',') + '\n';
+            });
+
+            const blob = new Blob([csvContent], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'certificate_template.csv';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        // Reset all
+        function resetAll() {
+            // Reset state
+            csvData = [];
+            csvHeaders = [];
+            fieldMapping = {};
+            validationResults = [];
+
+            // Reset UI
+            fileInfo.classList.remove('show');
+            previewArea.classList.remove('show');
+            mappingArea.classList.remove('show');
+            validationArea.classList.remove('show');
+
+            // Reset buttons
+            proceedBtn.disabled = true;
+            generateBtn.disabled = true;
+
+            // Reset file input
+            fileInput.value = '';
+        }
+
+        // Helper functions
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        function isValidEmail(email) {
+            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return re.test(email);
+        }
+
+        // Initialize on load
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,2116 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CertVerify Pro | Generation Engine</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- QR Code Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+    <!-- html2canvas for PDF generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <!-- jsPDF for PDF generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+    <!-- EmailJS SDK -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+
+    <style>
+        /* ===== GLOBAL DESIGN SYSTEM ===== */
+        :root {
+            /* Color System */
+            --primary-blue: #2563EB;
+            --primary-purple: #7C3AED;
+            --success-green: #10B981;
+            --error-red: #F43F5E;
+            --warning-amber: #F59E0B;
+            --background-light: #F3F4F6;
+            --background-white: #FFFFFF;
+            --text-dark: #1F2937;
+            --text-gray: #6B7280;
+            --border-light: #E5E7EB;
+            --sidebar-bg: #1E293B;
+            --sidebar-text: #F1F5F9;
+
+            /* Typography */
+            --font-primary: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            --font-heading: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+
+            /* Spacing */
+            --spacing-xs: 0.5rem;
+            --spacing-sm: 1rem;
+            --spacing-md: 1.5rem;
+            --spacing-lg: 2rem;
+            --spacing-xl: 3rem;
+
+            /* Shadows */
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+
+            /* Border Radius */
+            --radius-sm: 0.375rem;
+            --radius-md: 0.5rem;
+            --radius-lg: 0.75rem;
+            --radius-xl: 1rem;
+        }
+
+        /* ===== BASE STYLES ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-primary);
+            background-color: var(--background-light);
+            color: var(--text-dark);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        button,
+        input {
+            font-family: inherit;
+            font-size: inherit;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 var(--spacing-md);
+        }
+
+        /* ===== GENERATION ENGINE LAYOUT ===== */
+        /* Sidebar */
+        .sidebar {
+            width: 260px;
+            background-color: var(--sidebar-bg);
+            color: var(--sidebar-text);
+            min-height: 100vh;
+            padding: var(--spacing-md) 0;
+            position: fixed;
+            left: 0;
+            top: 0;
+            display: flex;
+            flex-direction: column;
+            z-index: 100;
+        }
+
+        .sidebar-header {
+            padding: 0 var(--spacing-md) var(--spacing-lg);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: var(--spacing-md);
+        }
+
+        .dashboard-logo {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+
+        .logo-icon-sidebar {
+            font-size: 1.75rem;
+            color: var(--primary-blue);
+        }
+
+        .logo-text-sidebar {
+            font-family: var(--font-heading);
+            font-weight: 700;
+            font-size: 1.25rem;
+        }
+
+        .nav-menu {
+            flex: 1;
+            padding: 0 var(--spacing-md);
+        }
+
+        .nav-list {
+            list-style: none;
+        }
+
+        .nav-item {
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            padding: var(--spacing-sm) var(--spacing-md);
+            border-radius: var(--radius-md);
+            transition: all 0.2s ease;
+        }
+
+        .nav-link:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .nav-link.active {
+            background-color: var(--primary-blue);
+            font-weight: 600;
+        }
+
+        .nav-icon {
+            width: 20px;
+            text-align: center;
+        }
+
+        .sidebar-footer {
+            padding: var(--spacing-md);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .back-button {
+            width: 100%;
+            background-color: rgba(255, 255, 255, 0.1);
+            color: var(--sidebar-text);
+            border: none;
+            padding: var(--spacing-sm);
+            border-radius: var(--radius-md);
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--spacing-xs);
+        }
+
+        .back-button:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: 260px;
+            padding: var(--spacing-md);
+        }
+
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--spacing-lg);
+            padding-bottom: var(--spacing-md);
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .page-title {
+            font-family: var(--font-heading);
+            font-size: 1.75rem;
+            font-weight: 700;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: var(--spacing-sm);
+        }
+
+        .primary-btn {
+            background-color: var(--primary-blue);
+            color: white;
+            border: none;
+            padding: var(--spacing-sm) var(--spacing-lg);
+            border-radius: var(--radius-md);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-xs);
+        }
+
+        .primary-btn:hover:not(:disabled) {
+            background-color: #1d4ed8;
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .primary-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .secondary-btn {
+            background-color: white;
+            color: var(--text-dark);
+            border: 1px solid var(--border-light);
+            padding: var(--spacing-sm) var(--spacing-lg);
+            border-radius: var(--radius-md);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-xs);
+        }
+
+        .secondary-btn:hover {
+            background-color: var(--background-light);
+            border-color: var(--text-gray);
+        }
+
+        /* Generation Overview */
+        .generation-overview {
+            background-color: var(--background-white);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-xl);
+            margin-bottom: var(--spacing-xl);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .overview-header {
+            text-align: center;
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .overview-title {
+            font-family: var(--font-heading);
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .overview-subtitle {
+            color: var(--text-gray);
+        }
+
+        /* Progress Section */
+        .progress-section {
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--spacing-md);
+        }
+
+        .progress-title {
+            font-weight: 600;
+            font-size: 1.125rem;
+        }
+
+        .progress-stats {
+            display: flex;
+            gap: var(--spacing-lg);
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-blue);
+        }
+
+        .stat-label {
+            font-size: 0.875rem;
+            color: var(--text-gray);
+        }
+
+        /* Progress Bar */
+        .progress-bar-container {
+            background-color: var(--background-light);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-lg);
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .progress-bar-large {
+            height: 20px;
+            background-color: var(--border-light);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: var(--spacing-sm);
+            position: relative;
+        }
+
+        .progress-fill-large {
+            height: 100%;
+            background: linear-gradient(90deg, var(--success-green), #34D399);
+            width: 0%;
+            transition: width 0.5s ease;
+            border-radius: 10px;
+        }
+
+        .progress-text {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.875rem;
+            color: var(--text-gray);
+        }
+
+        .progress-percent {
+            font-weight: 600;
+            color: var(--success-green);
+        }
+
+        /* Batch Progress */
+        .batch-progress {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: var(--spacing-md);
+            margin-top: var(--spacing-lg);
+        }
+
+        .batch-item {
+            background-color: var(--background-light);
+            border-radius: var(--radius-md);
+            padding: var(--spacing-md);
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .batch-item.active {
+            background-color: rgba(37, 99, 235, 0.1);
+            border: 2px solid var(--primary-blue);
+        }
+
+        .batch-item.completed {
+            background-color: rgba(16, 185, 129, 0.1);
+            border: 2px solid var(--success-green);
+        }
+
+        .batch-number {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .batch-status {
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .status-pending {
+            color: var(--text-gray);
+        }
+
+        .status-processing {
+            color: var(--primary-blue);
+        }
+
+        .status-completed {
+            color: var(--success-green);
+        }
+
+        /* Console Log */
+        .console-section {
+            background-color: var(--background-white);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-xl);
+            margin-bottom: var(--spacing-xl);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .console-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .console-title {
+            font-family: var(--font-heading);
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        .console-controls {
+            display: flex;
+            gap: var(--spacing-sm);
+        }
+
+        .console-btn {
+            background-color: var(--background-light);
+            border: 1px solid var(--border-light);
+            padding: 0.5rem 1rem;
+            border-radius: var(--radius-md);
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-xs);
+        }
+
+        .console-btn:hover {
+            background-color: var(--border-light);
+        }
+
+        .console-window {
+            background-color: #1E293B;
+            color: #E2E8F0;
+            border-radius: var(--radius-md);
+            padding: var(--spacing-md);
+            height: 400px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.875rem;
+            line-height: 1.5;
+        }
+
+        .log-entry {
+            padding: 0.5rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            gap: var(--spacing-sm);
+        }
+
+        .log-entry:last-child {
+            border-bottom: none;
+        }
+
+        .log-timestamp {
+            color: #94A3B8;
+            min-width: 80px;
+        }
+
+        .log-message {
+            flex: 1;
+        }
+
+        .log-success {
+            color: #34D399;
+        }
+
+        .log-info {
+            color: #60A5FA;
+        }
+
+        .log-warning {
+            color: #FBBF24;
+        }
+
+        .log-error {
+            color: #F87171;
+        }
+
+        /* Certificate Preview */
+        .preview-section {
+            background-color: var(--background-white);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-xl);
+            margin-bottom: var(--spacing-xl);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .preview-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .preview-title {
+            font-family: var(--font-heading);
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        .preview-nav {
+            display: flex;
+            gap: var(--spacing-sm);
+            align-items: center;
+        }
+
+        .nav-btn {
+            background-color: var(--background-light);
+            border: 1px solid var(--border-light);
+            width: 36px;
+            height: 36px;
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .nav-btn:hover:not(:disabled) {
+            background-color: var(--border-light);
+        }
+
+        .nav-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .preview-counter {
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+
+        .certificate-preview-container {
+            background-color: #F8FAFC;
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-lg);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 400px;
+            overflow: auto;
+        }
+
+        .certificate-preview {
+            width: 600px;
+            height: 450px;
+            background-color: white;
+            position: relative;
+            box-shadow: var(--shadow-md);
+        }
+
+        /* Current Processing */
+        .current-processing {
+            background-color: var(--background-white);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-xl);
+            margin-bottom: var(--spacing-xl);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .processing-header {
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .processing-title {
+            font-family: var(--font-heading);
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        .processing-list {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-sm);
+        }
+
+        .processing-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: var(--spacing-sm);
+            background-color: var(--background-light);
+            border-radius: var(--radius-md);
+            transition: all 0.3s ease;
+        }
+
+        .processing-item.active {
+            background-color: rgba(37, 99, 235, 0.1);
+            border-left: 4px solid var(--primary-blue);
+        }
+
+        .processing-item.completed {
+            background-color: rgba(16, 185, 129, 0.1);
+            border-left: 4px solid var(--success-green);
+        }
+
+        .processing-info {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+
+        .processing-name {
+            font-weight: 500;
+        }
+
+        .processing-email {
+            font-size: 0.875rem;
+            color: var(--text-gray);
+        }
+
+        .processing-status {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-xs);
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+
+        .status-spinner {
+            width: 16px;
+            height: 16px;
+            border: 2px solid var(--border-light);
+            border-top-color: var(--primary-blue);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .sidebar {
+                width: 80px;
+            }
+
+            .logo-text-sidebar,
+            .nav-text,
+            .back-text {
+                display: none;
+            }
+
+            .dashboard-logo {
+                justify-content: center;
+            }
+
+            .nav-link {
+                justify-content: center;
+                padding: var(--spacing-sm);
+            }
+
+            .nav-icon {
+                width: auto;
+            }
+
+            .main-content {
+                margin-left: 80px;
+            }
+
+            .batch-progress {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .top-bar {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: var(--spacing-md);
+            }
+
+            .action-buttons {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .progress-stats {
+                flex-direction: column;
+                gap: var(--spacing-sm);
+                align-items: flex-start;
+            }
+
+            .batch-progress {
+                grid-template-columns: 1fr;
+            }
+
+            .certificate-preview {
+                width: 100%;
+                height: 350px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .main-content {
+                padding: var(--spacing-sm);
+            }
+
+            .generation-overview,
+            .console-section,
+            .preview-section,
+            .current-processing {
+                padding: var(--spacing-lg);
+            }
+
+            .console-controls {
+                flex-direction: column;
+            }
+        }
+
+        /* ===== SETTINGS MODAL ===== */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .modal-container {
+            background-color: var(--background-white);
+            border-radius: var(--radius-lg);
+            width: 100%;
+            max-width: 500px;
+            padding: var(--spacing-xl);
+            box-shadow: var(--shadow-lg);
+            transform: translateY(20px);
+            transition: transform 0.3s ease;
+        }
+
+        .modal-overlay.active .modal-container {
+            transform: translateY(0);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .modal-title {
+            font-family: var(--font-heading);
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.25rem;
+            cursor: pointer;
+            color: var(--text-gray);
+        }
+
+        .form-group {
+            margin-bottom: var(--spacing-md);
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: var(--spacing-xs);
+            font-weight: 500;
+            font-size: 0.875rem;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-md);
+            transition: border-color 0.2s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: var(--spacing-sm);
+            margin-top: var(--spacing-lg);
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Sidebar Navigation -->
+    <nav class="sidebar">
+        <div class="sidebar-header">
+            <div class="dashboard-logo">
+                <i class="fas fa-certificate logo-icon-sidebar"></i>
+                <span class="logo-text-sidebar">CertVerify</span>
+            </div>
+        </div>
+
+        <div class="nav-menu">
+            <ul class="nav-list">
+                <li class="nav-item">
+                    <a href="admin-dashboard.html" class="nav-link">
+                        <i class="fas fa-chart-line nav-icon"></i>
+                        <span class="nav-text">Dashboard</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="certificate-designer.html" class="nav-link">
+                        <i class="fas fa-paint-brush nav-icon"></i>
+                        <span class="nav-text">Create Design</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="bulk-upload.html" class="nav-link">
+                        <i class="fas fa-file-upload nav-icon"></i>
+                        <span class="nav-text">Bulk Upload</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="generation-engine.html" class="nav-link active">
+                        <i class="fas fa-cogs nav-icon"></i>
+                        <span class="nav-text">Generation</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="dispatch-status.html" class="nav-link">
+                        <i class="fas fa-paper-plane nav-icon"></i>
+                        <span class="nav-text">Dispatch Status</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <div class="sidebar-footer">
+            <button class="back-button" id="backBtn">
+                <i class="fas fa-arrow-left"></i>
+                <span class="back-text">Back to Dashboard</span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Top Bar -->
+        <div class="top-bar">
+            <h1 class="page-title">Certificate Generation Engine</h1>
+            <div class="action-buttons">
+                <button class="secondary-btn" id="pauseBtn">
+                    <i class="fas fa-pause"></i>
+                    Pause
+                </button>
+                <button class="secondary-btn" id="settingsBtn">
+                    <i class="fas fa-cog"></i>
+                    Email Settings
+                </button>
+                <input type="checkbox" id="sendEmailsCheckbox" style="width: 18px; height: 18px; cursor: pointer;">
+                <label for="sendEmailsCheckbox" style="cursor: pointer; font-weight: 500;">Send Emails</label>
+            </div>
+            <button class="secondary-btn" id="retryBtn"
+                style="display:none; color: var(--error-red); border-color: var(--error-red);">
+                <i class="fas fa-redo"></i>
+                Retry Failed
+            </button>
+            <button class="primary-btn" id="startBtn">
+                <i class="fas fa-play"></i>
+                Start Generation
+            </button>
+        </div>
+        </div>
+
+        <!-- Generation Overview -->
+        <div class="generation-overview">
+            <div class="overview-header">
+                <h2 class="overview-title">Batch Certificate Generation</h2>
+                <p class="overview-subtitle">
+                    Generating certificates for <span id="totalRecords">0</span> recipients in batches of <span
+                        id="batchSize">3</span>
+                </p>
+            </div>
+
+            <!-- Progress Section -->
+            <div class="progress-section">
+                <div class="progress-header">
+                    <div class="progress-title">Generation Progress</div>
+                    <div class="progress-stats">
+                        <div class="stat-item">
+                            <div class="stat-value" id="processedCount">0</div>
+                            <div class="stat-label">Processed</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value" id="successCount">0</div>
+                            <div class="stat-label">Successful</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value" id="failedCount">0</div>
+                            <div class="stat-label">Failed</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="progress-bar-container">
+                    <div class="progress-bar-large">
+                        <div class="progress-fill-large" id="progressFillLarge"></div>
+                    </div>
+                    <div class="progress-text">
+                        <span>Generating certificates...</span>
+                        <span class="progress-percent" id="progressPercent">0%</span>
+                    </div>
+                </div>
+
+                <!-- Batch Progress -->
+                <div class="batch-progress" id="batchProgress">
+                    <!-- Batch items will be populated by JS -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Console Log Window -->
+        <div class="console-section">
+            <div class="console-header">
+                <h3 class="console-title">Generation Log</h3>
+                <div class="console-controls">
+                    <button class="console-btn" id="clearLogBtn">
+                        <i class="fas fa-trash"></i>
+                        Clear Log
+                    </button>
+                    <button class="console-btn" id="exportLogBtn">
+                        <i class="fas fa-download"></i>
+                        Export Log
+                    </button>
+                </div>
+            </div>
+
+            <div class="console-window" id="consoleWindow">
+                <div class="log-entry">
+                    <span class="log-timestamp">14:32:01</span>
+                    <span class="log-message log-info">> Certificate generation engine initialized</span>
+                </div>
+                <div class="log-entry">
+                    <span class="log-timestamp">14:32:01</span>
+                    <span class="log-message log-info">> Loaded template design from database</span>
+                </div>
+                <div class="log-entry">
+                    <span class="log-timestamp">14:32:02</span>
+                    <span class="log-message log-info">> Ready to process <span id="logTotalRecords">0</span>
+                        records</span>
+                </div>
+                <!-- More log entries will be added dynamically -->
+            </div>
+        </div>
+
+        <!-- Certificate Preview -->
+        <div class="preview-section">
+            <div class="preview-header">
+                <h3 class="preview-title">Certificate Preview</h3>
+                <div class="preview-nav">
+                    <button class="nav-btn" id="prevCertBtn" disabled>
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <span class="preview-counter">
+                        Certificate <span id="currentCertIndex">1</span> of <span id="totalCerts">0</span>
+                    </span>
+                    <button class="nav-btn" id="nextCertBtn" disabled>
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="certificate-preview-container">
+                <div class="certificate-preview" id="certificatePreview">
+                    <!-- Certificate will be rendered here -->
+                    <div style="text-align: center; padding: 3rem; color: var(--text-gray);">
+                        <i class="fas fa-certificate" style="font-size: 3rem; margin-bottom: 1rem; display: block;"></i>
+                        <h3>Certificate Preview</h3>
+                        <p>Start generation to see preview</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Current Processing -->
+        <div class="current-processing">
+            <div class="processing-header">
+                <h3 class="processing-title">Currently Processing</h3>
+            </div>
+
+            <div class="processing-list" id="processingList">
+                <!-- Processing items will be populated by JS -->
+                <div class="processing-item" style="text-align: center; padding: 2rem; color: var(--text-gray);">
+                    <i class="fas fa-spinner fa-spin" style="margin-right: 0.5rem;"></i>
+                    Waiting to start generation...
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Settings Modal -->
+    <div class="modal-overlay" id="settingsModal">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h3 class="modal-title">Email Configuration</h3>
+                <button class="close-btn" id="closeSettingsBtn">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Service ID</label>
+                    <input type="text" class="form-input" id="serviceIdInput" placeholder="service_xxxxxxx">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Template ID</label>
+                    <input type="text" class="form-input" id="templateIdInput" placeholder="template_xxxxxxx">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Public Key</label>
+                    <input type="text" class="form-input" id="publicKeyInput" placeholder="User Public Key">
+                </div>
+                <div class="form-group">
+                    <div style="font-size: 0.8rem; color: var(--text-gray); margin-bottom: 0.5rem;">
+                        <i class="fas fa-info-circle"></i> <strong>Note:</strong> To attach the certificate, ensure your
+                        EmailJS template has a parameter named <code>content_attachment</code> or similar for Base64
+                        data.
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="secondary-btn" id="cancelSettingsBtn">Cancel</button>
+                <button class="primary-btn" id="saveSettingsBtn">Save Configuration</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // DOM Elements
+        const startBtn = document.getElementById('startBtn');
+        const pauseBtn = document.getElementById('pauseBtn');
+        const backBtn = document.getElementById('backBtn');
+        const clearLogBtn = document.getElementById('clearLogBtn');
+        const exportLogBtn = document.getElementById('exportLogBtn');
+        const prevCertBtn = document.getElementById('prevCertBtn');
+        const nextCertBtn = document.getElementById('nextCertBtn');
+        const retryBtn = document.getElementById('retryBtn');
+        const sendEmailsCheckbox = document.getElementById('sendEmailsCheckbox');
+
+        const totalRecordsEl = document.getElementById('totalRecords');
+        const batchSizeEl = document.getElementById('batchSize');
+        const processedCountEl = document.getElementById('processedCount');
+        const successCountEl = document.getElementById('successCount');
+        const failedCountEl = document.getElementById('failedCount');
+        const progressFillLarge = document.getElementById('progressFillLarge');
+        const progressPercent = document.getElementById('progressPercent');
+        const batchProgressEl = document.getElementById('batchProgress');
+        const consoleWindow = document.getElementById('consoleWindow');
+        const currentCertIndexEl = document.getElementById('currentCertIndex');
+        const totalCertsEl = document.getElementById('totalCerts');
+        const certificatePreview = document.getElementById('certificatePreview');
+        const processingList = document.getElementById('processingList');
+        const logTotalRecords = document.getElementById('logTotalRecords');
+
+        // State variables
+        let isGenerating = false;
+        let isPaused = false;
+        let currentBatch = 0;
+        let batchSize = 3;
+        let totalRecords = 0;
+        let processedCount = 0;
+        let successCount = 0;
+        let failedCount = 0;
+        let currentCertIndex = 0;
+        let sendEmails = false;
+        let emailSentCount = 0;
+
+        let generationData = [];
+        let generatedCertificates = [];
+        let generationLog = [];
+        let template = null;
+        let emailConfig = {
+            serviceId: '',
+            templateId: '',
+            publicKey: ''
+        };
+
+        // Initialize
+        function init() {
+            try {
+                console.log("Initializing Generation Engine...");
+                setupEventListeners();
+                loadEmailConfig(); // Load saved email config
+                loadGenerationData();
+                updateUI();
+                addLogEntry('Certificate generation engine initialized', 'info');
+
+                // Restore session from localStorage if available (Reopen closed tab scenario)
+                const activeAdmin = sessionStorage.getItem('activeAdminEmail');
+                const rememberedAdmin = localStorage.getItem('adminEmail');
+
+                if (!activeAdmin && rememberedAdmin && localStorage.getItem('rememberAdmin') === 'true') {
+                    sessionStorage.setItem('activeAdminEmail', rememberedAdmin);
+                    const appPass = localStorage.getItem('adminAppPassword');
+                    if (appPass) sessionStorage.setItem('activeAdminAppPassword', appPass);
+                    console.log("Restored admin session from local storage");
+                    addLogEntry('Restored admin session', 'info');
+                }
+
+                // Load template
+                const savedTemplate = localStorage.getItem('certificateDesign');
+                if (savedTemplate) {
+                    template = savedTemplate; // Keep as string for renderTemplate check, or parse if needed
+                    addLogEntry('Loaded template design from database', 'info');
+                } else {
+                    addLogEntry('Using default template', 'info');
+                }
+            } catch (e) {
+                console.error("Initialization error:", e);
+                alert("Initialization error: " + e.message);
+                addLogEntry('Error initializing: ' + e.message, 'error');
+            }
+        }
+
+        // Set up event listeners
+        function setupEventListeners() {
+            if (startBtn) {
+                console.log("Attaching start button listener");
+                startBtn.addEventListener('click', (e) => {
+                    console.log("Start button clicked");
+                    toggleGeneration();
+                });
+            } else {
+                console.error("Start button not found!");
+            }
+
+            if (pauseBtn) pauseBtn.addEventListener('click', togglePause);
+            if (backBtn) backBtn.addEventListener('click', () => {
+                window.location.href = 'admin-dashboard.html';
+            });
+            if (clearLogBtn) clearLogBtn.addEventListener('click', clearLog);
+            if (exportLogBtn) exportLogBtn.addEventListener('click', exportLog);
+            if (prevCertBtn) prevCertBtn.addEventListener('click', showPreviousCertificate);
+            if (nextCertBtn) nextCertBtn.addEventListener('click', showNextCertificate);
+            if (sendEmailsCheckbox) {
+                sendEmailsCheckbox.addEventListener('change', (e) => {
+                    sendEmails = e.target.checked;
+                    if (sendEmails && (!emailConfig.serviceId || !emailConfig.templateId || !emailConfig.publicKey)) {
+                        alert("Please configure EmailJS settings first.");
+                        settingsModal.classList.add('active');
+                        e.target.checked = false;
+                        sendEmails = false;
+                    } else {
+                        addLogEntry(`Email sending ${sendEmails ? 'enabled' : 'disabled'}`, 'info');
+                    }
+                });
+            }
+
+            if (retryBtn) {
+                retryBtn.addEventListener('click', () => {
+                    addLogEntry('Retrying failed items...', 'info');
+                    startGeneration();
+                });
+            }
+
+            // Settings Modal
+            const settingsBtn = document.getElementById('settingsBtn');
+            const settingsModal = document.getElementById('settingsModal');
+            const closeSettingsBtn = document.getElementById('closeSettingsBtn');
+            const cancelSettingsBtn = document.getElementById('cancelSettingsBtn');
+            const saveSettingsBtn = document.getElementById('saveSettingsBtn');
+
+            if (settingsBtn) {
+                settingsBtn.addEventListener('click', () => {
+                    loadEmailInputs();
+                    settingsModal.classList.add('active');
+                });
+            }
+
+            if (closeSettingsBtn) closeSettingsBtn.addEventListener('click', () => settingsModal.classList.remove('active'));
+            if (cancelSettingsBtn) cancelSettingsBtn.addEventListener('click', () => settingsModal.classList.remove('active'));
+
+            if (saveSettingsBtn) {
+                saveSettingsBtn.addEventListener('click', () => {
+                    saveEmailConfig();
+                    settingsModal.classList.remove('active');
+                });
+            }
+        }
+
+        // Load Email Configuration
+        function loadEmailConfig() {
+            const savedConfig = localStorage.getItem('emailConfig');
+            if (savedConfig) {
+                emailConfig = JSON.parse(savedConfig);
+                // Initialize EmailJS
+                if (emailConfig.publicKey) {
+                    try {
+                        emailjs.init(emailConfig.publicKey);
+                        addLogEntry('EmailJS initialized', 'info');
+
+                        // AUTO-ENABLE sending if config exists
+                        sendEmails = true;
+                        if (sendEmailsCheckbox) sendEmailsCheckbox.checked = true;
+                        addLogEntry('Email sending enabled by default', 'info');
+                    } catch (e) {
+                        addLogEntry('Error initializing EmailJS', 'error');
+                    }
+                }
+            }
+        }
+
+        function loadEmailInputs() {
+            document.getElementById('serviceIdInput').value = emailConfig.serviceId || '';
+            document.getElementById('templateIdInput').value = emailConfig.templateId || '';
+            document.getElementById('publicKeyInput').value = emailConfig.publicKey || '';
+        }
+
+        function saveEmailConfig() {
+            const newConfig = {
+                serviceId: document.getElementById('serviceIdInput').value.trim(),
+                templateId: document.getElementById('templateIdInput').value.trim(),
+                publicKey: document.getElementById('publicKeyInput').value.trim()
+            };
+
+            if (!newConfig.serviceId || !newConfig.templateId || !newConfig.publicKey) {
+                alert("Please fill in all fields.");
+                return;
+            }
+
+            emailConfig = newConfig;
+            localStorage.setItem('emailConfig', JSON.stringify(emailConfig));
+
+            // Re-init EmailJS
+            try {
+                emailjs.init(emailConfig.publicKey);
+                addLogEntry('EmailJS configuration saved and initialized.', 'success');
+                addLogEntry(`Service ID: ${emailConfig.serviceId} | Template ID: ${emailConfig.templateId}`, 'info');
+
+                // Optional: Verify sanity
+                if (!emailConfig.serviceId.startsWith('service_')) addLogEntry('Warning: Service ID usually starts with "service_"', 'warning');
+                if (!emailConfig.templateId.startsWith('template_')) addLogEntry('Warning: Template ID usually starts with "template_"', 'warning');
+
+            } catch (e) {
+                console.error(e);
+                alert("Error initializing EmailJS: " + e.message);
+            }
+        }
+
+        // Load generation data from localStorage
+        function loadGenerationData() {
+            const data = localStorage.getItem('bulkGenerationData');
+
+            if (data) {
+                generationData = JSON.parse(data);
+                addLogEntry('Loaded ' + generationData.length + ' records from database', 'info');
+            } else {
+                // FALLBACK: Use sample data for testing if no data found
+                addLogEntry('No uploaded data found. Using sample data for demonstration.', 'warning');
+                generationData = [
+                    { name: 'John Doe', email: 'john@example.com', course: 'Web Development', date: new Date().toLocaleDateString(), certId: 'CERT-001', organization: 'Tech Dept' },
+                    { name: 'Jane Smith', email: 'jane@example.com', course: 'Data Science', date: new Date().toLocaleDateString(), certId: 'CERT-002', organization: 'Tech Dept' },
+                    { name: 'Bob Johnson', email: 'bob@example.com', course: 'UX Design', date: new Date().toLocaleDateString(), certId: 'CERT-003', organization: 'Design Dept' }
+                ];
+            }
+
+            totalRecords = generationData.length;
+            totalRecordsEl.textContent = totalRecords;
+            logTotalRecords.textContent = totalRecords;
+            totalCertsEl.textContent = totalRecords;
+
+            // Initialize batch progress
+            initBatchProgress();
+
+            // Ensure button is enabled
+            startBtn.disabled = false;
+        }
+
+        // Initialize batch progress display
+        function initBatchProgress() {
+            batchProgressEl.innerHTML = '';
+            const batchCount = Math.ceil(totalRecords / batchSize);
+
+            for (let i = 0; i < batchCount; i++) {
+                const batchItem = document.createElement('div');
+                batchItem.className = 'batch-item';
+                batchItem.id = `batch-${i}`;
+
+                const batchNumber = document.createElement('div');
+                batchNumber.className = 'batch-number';
+                batchNumber.textContent = i + 1;
+
+                const batchStatus = document.createElement('div');
+                batchStatus.className = 'batch-status status-pending';
+                batchStatus.textContent = 'Pending';
+
+                batchItem.appendChild(batchNumber);
+                batchItem.appendChild(batchStatus);
+                batchProgressEl.appendChild(batchItem);
+            }
+        }
+
+        // Toggle generation
+        function toggleGeneration() {
+            if (!isGenerating) {
+                startGeneration();
+            } else {
+                stopGeneration();
+            }
+        }
+
+        // Start generation
+        async function startGeneration() {
+            if (generationData.length === 0) {
+                addLogEntry('No data to process', 'error');
+                return;
+            }
+
+            isGenerating = true;
+            isPaused = false;
+
+            // Reset counters
+            processedCount = 0;
+            successCount = 0;
+            failedCount = 0;
+            emailSentCount = 0;
+
+            startBtn.innerHTML = '<i class="fas fa-stop"></i> Stop Generation';
+            pauseBtn.disabled = false;
+            addLogEntry('Starting certificate generation...', 'info');
+
+            // DEBUG: Show email mode
+            if (sendEmails) {
+                addLogEntry('DEBUG: Email dispatch is ENABLED', 'info');
+                if (!emailConfig.publicKey && !sessionStorage.getItem('activeAdminAppPassword')) {
+                    addLogEntry('WARNING: Email enabled but no strict config found. Might fail.', 'warning');
+                }
+
+                // CRITICAL VALIDATION for Admin Credentials
+                const adminEmail = sessionStorage.getItem('activeAdminEmail');
+                const adminAppPass = sessionStorage.getItem('activeAdminAppPassword');
+
+                if (!adminEmail || !adminAppPass) {
+                    // Check if we can fallback to localStorage
+                    const localEmail = localStorage.getItem('adminEmail');
+                    const localAppPass = localStorage.getItem('adminAppPassword');
+
+                    if (localEmail && localAppPass) {
+                        sessionStorage.setItem('activeAdminEmail', localEmail);
+                        sessionStorage.setItem('activeAdminAppPassword', localAppPass);
+                        addLogEntry('Restored credentials from storage.', 'info');
+                    } else {
+                        alert("CRITICAL: Admin App Password missing!\n\nTo send emails, you must LOGOUT and Login again with your App Password.");
+                        addLogEntry("ERROR: Missing Admin App Password. Cannot send authentic emails.", 'error');
+                        isGenerating = false;
+                        startBtn.innerHTML = '<i class="fas fa-play"></i> Start Generation';
+                        return; // ABUSE STOP
+                    }
+                } else {
+                    addLogEntry(`Authenticated Sender: ${adminEmail}`, 'success');
+                }
+            } else {
+                addLogEntry('WARNING: Email dispatch is DISABLED. No emails will be sent.', 'warning');
+            }
+
+            // Process in batches
+            await processBatches();
+        }
+
+        // Stop generation
+        function stopGeneration() {
+            isGenerating = false;
+            startBtn.innerHTML = '<i class="fas fa-play"></i> Start Generation';
+            pauseBtn.disabled = true;
+            addLogEntry('Generation stopped by user', 'warning');
+        }
+
+        // Toggle pause
+        function togglePause() {
+            isPaused = !isPaused;
+            pauseBtn.innerHTML = isPaused ?
+                '<i class="fas fa-play"></i> Resume' :
+                '<i class="fas fa-pause"></i> Pause';
+
+            addLogEntry(isPaused ? 'Generation paused' : 'Generation resumed', 'info');
+        }
+
+        // Process data in batches
+        async function processBatches() {
+            const batchCount = Math.ceil(totalRecords / batchSize);
+
+            for (let batchIndex = 0; batchIndex < batchCount; batchIndex++) {
+                if (!isGenerating) break;
+
+                // Wait if paused
+                while (isPaused && isGenerating) {
+                    await sleep(500);
+                }
+
+                if (!isGenerating) break;
+
+                // Update current batch
+                currentBatch = batchIndex;
+                updateBatchProgress(batchIndex, 'processing');
+
+                const start = batchIndex * batchSize;
+                const end = Math.min(start + batchSize, totalRecords);
+                const batchData = generationData.slice(start, end);
+
+                addLogEntry(`Processing batch ${batchIndex + 1}/${batchCount} (records ${start + 1}-${end})`, 'info');
+
+                // Process current batch
+                await processBatch(batchData, batchIndex);
+
+                if (!isGenerating) break;
+
+                updateBatchProgress(batchIndex, 'completed');
+            }
+
+            if (isGenerating) {
+                const message = `Certificate generation completed successfully! Emails Sent: ${emailSentCount}`;
+                addLogEntry(message, 'success');
+                alert(message);
+
+                // Save to localStorage for verification page
+                // Save to localStorage for verification page
+                // Merge with existing database to avoid overwriting previous batches
+                const existingDB = JSON.parse(localStorage.getItem('certificateDatabase') || '[]');
+                const newDB = [...existingDB, ...generatedCertificates];
+                // Remove duplicates by UUID if any
+                const uniqueDB = Array.from(new Map(newDB.map(item => [item.uuid, item])).values());
+
+                localStorage.setItem('certificateDatabase', JSON.stringify(uniqueDB));
+                addLogEntry('Certificates saved to local database for verification', 'success');
+
+                startBtn.innerHTML = '<i class="fas fa-redo"></i> Restart';
+                pauseBtn.disabled = true;
+            }
+        }
+
+        // Process a single batch
+        async function processBatch(batchData, batchIndex) {
+            // SEQUENTIAL processing to prevent race conditions and Ensure 1:1 mapping reliability
+            for (let index = 0; index < batchData.length; index++) {
+                if (!isGenerating) break;
+
+                const record = batchData[index];
+                const recordIndex = batchIndex * batchSize + index;
+                await processSingleRecord(record, recordIndex);
+            }
+        }
+
+        // Process a single record
+        async function processSingleRecord(record, index) {
+            // Check if already successful
+            if (generatedCertificates[index] && generatedCertificates[index].status === 'success' && generatedCertificates[index].dispatchStatus !== 'failed') {
+                // Already done, skip
+                // addLogEntry(`Skipping ${record.name} (Already completed)`, 'info');
+                return;
+            }
+
+            // Add to processing list
+            addToProcessingList(record, index);
+
+            try {
+                // Step 1: Generate or Reuse UUID
+                const existingCert = generatedCertificates[index];
+                const uuid = (existingCert && existingCert.uuid) ? existingCert.uuid : generateUUID();
+
+                if (existingCert && existingCert.uuid) {
+                    addLogEntry(`Retrying ${record.name} (UUID: ${uuid.substring(0, 8)}...)...`, 'info');
+                } else {
+                    addLogEntry(`Processing ${record.name}...`, 'info');
+                }
+
+                // Step 2: Create certificate HTML (Hidden for PDF generation)
+                // Use a UNIQUE container ID to avoid any potential collision
+                const tempContainerId = `temp-cert-${uuid}`;
+                const tempContainer = document.createElement('div');
+                tempContainer.id = tempContainerId;
+                tempContainer.style.position = 'absolute';
+                tempContainer.style.left = '-9999px';
+                tempContainer.style.top = '0';
+
+                // Render content
+                tempContainer.innerHTML = createCertificateHTML(record, uuid);
+                document.body.appendChild(tempContainer);
+
+                // Wait a moment for images/fonts to load
+                await sleep(500);
+
+                // Inject QR Code
+                const qrEl = tempContainer.querySelector(`[id^='qrcode-']`);
+                if (qrEl) {
+                    new QRCode(qrEl, {
+                        text: `${window.location.origin}/verification-result.html?id=${uuid}`,
+                        width: parseInt(qrEl.style.width) || 100,
+                        height: parseInt(qrEl.style.height) || 100,
+                        correctLevel: QRCode.CorrectLevel.H
+                    });
+                    // Wait for QR to render
+                    await sleep(300);
+                }
+
+                // Step 4: Generate PDF
+                addLogEntry(`Generating PDF...`, 'info');
+                // Capture EXACTLY the first child we inserted
+                const captureTarget = tempContainer.firstElementChild || tempContainer;
+
+                const canvas = await html2canvas(captureTarget, {
+                    scale: 2, // High resolution
+                    useCORS: true,
+                    logging: false,
+                    allowTaint: true
+                });
+
+                const imgData = canvas.toDataURL('image/png');
+
+                // Initialize jsPDF correctly (UMD build)
+                const { jsPDF } = window.jspdf;
+                const pdf = new jsPDF({
+                    orientation: 'landscape',
+                    unit: 'px',
+                    format: [canvas.width / 2, canvas.height / 2] // Match scaled canvas to PDF size
+                });
+                pdf.addImage(imgData, 'PNG', 0, 0, canvas.width / 2, canvas.height / 2);
+
+                // In a real app, we would upload this blob to a server. 
+                const pdfBlob = pdf.output('blob', { compress: true });
+
+                // Clean up DOM immediately
+                if (document.body.contains(tempContainer)) {
+                    document.body.removeChild(tempContainer);
+                }
+
+                // Verification Link
+                const certLink = `${window.location.origin}/public-verification.html?id=${uuid}`;
+
+                // Mark as success
+                processedCount++;
+                successCount++;
+
+                // Store success locally for UI
+                generatedCertificates[index] = {
+                    ...record,
+                    uuid,
+                    html: createCertificateHTML(record, uuid),
+                    status: 'success',
+                    dispatchStatus: 'pending', // Default
+                    generatedDate: new Date().toISOString()
+                };
+
+                // Add to Backend DB FIRST
+                const uploadResult = await uploadToBackend(generatedCertificates[index], pdfBlob);
+
+                // Send email if enabled
+                if (sendEmails) {
+                    try {
+
+                        // Update UI to show Sending status
+                        updateProcessingItem(index, 'sending');
+
+                        addLogEntry(`Initiating email dispatch for ${record.email}...`, 'info');
+
+                        // Wait 1 second (Rate limit help)
+                        // Wait 2 seconds (Rate limit help)
+                        await sleep(2000);
+
+                        let emailSent = false;
+
+                        // STRATEGY 1: Backend Dispatch (Preferred - Handles Attachments Robustly)
+                        if (!uploadResult.localOnly) {
+                            try {
+                                const dispatchResponse = await fetch('/api/dispatch', {
+                                    method: 'POST',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify({
+                                        id: uuid,
+                                        email: record.email,
+                                        name: record.name,
+                                        course: record.course,
+                                        certificate_link: certLink,
+                                        smtpConfig: {
+                                            email: sessionStorage.getItem('activeAdminEmail') || localStorage.getItem('adminEmail'),
+                                            password: sessionStorage.getItem('activeAdminAppPassword') || localStorage.getItem('adminAppPassword')
+                                        }
+                                    })
+                                });
+
+                                const dispatchData = await dispatchResponse.json();
+                                if (dispatchResponse.ok && dispatchData.success) {
+                                    addLogEntry(`Email sent via SMTP Server to ${record.email}`, 'success');
+                                    emailSent = true;
+                                    emailSentCount++;
+                                } else {
+                                    console.warn("Backend dispatch failed/skipped:", dispatchData);
+                                    if (dispatchResponse.status !== 500) {
+                                        // 500 might mean config missing, so we fallback
+                                        addLogEntry(`Server dispatch response: ${dispatchData.message}`, 'warning');
+                                    }
+                                }
+                            } catch (backendErr) {
+                                console.warn("Backend dispatch error:", backendErr);
+                            }
+                        }
+
+                        // STRATEGY 2: Client-Side EmailJS (Fallback or Direct)
+                        if (!emailSent) {
+                            addLogEntry(`Attempting Client-Side EmailJS...`, 'info');
+
+                            // Verify Config
+                            if (!emailConfig.serviceId || !emailConfig.templateId || !emailConfig.publicKey) {
+                                throw new Error("EmailJS not configured. Please check settings.");
+                            }
+
+                            // Ensure Init
+                            try { emailjs.init(emailConfig.publicKey); } catch (e) { }
+
+                            // Get Admin Email for Sender validation
+                            const adminEmail = sessionStorage.getItem('activeAdminEmail') || localStorage.getItem('adminEmail') || 'admin@certverify.pro';
+
+                            // Clean Base64 for Attachment (Remove data:image/png;base64, prefix)
+                            // Many EmailJS providers expect PURE Base64 for attachments
+                            const cleanBase64 = imgData.split(',')[1];
+
+                            // Check size again
+                            if (cleanBase64.length > 2000000) { // 2MB limit roughly
+                                addLogEntry('Warning: Attachment is very large. EmailJS might fail.', 'warning');
+                            }
+
+                            const templateParams = {
+                                to_email: record.email,
+                                name: record.name,
+                                to_name: record.name, // Keep for backward compat
+                                course_name: record.course || "Course Name",
+                                certificate_link: certLink,
+                                from_name: "CertVerify Admin",
+                                from_email: adminEmail,
+                                reply_to: adminEmail, // Good practice to keep
+                                content_attachment: cleanBase64
+                            };
+
+                            console.log("Sending EmailJS params:", { ...templateParams, content_attachment: "(truncated)" });
+
+                            const response = await emailjs.send(
+                                emailConfig.serviceId,
+                                emailConfig.templateId,
+                                templateParams
+                            );
+
+                            if (response.status === 200 || response.text === 'OK') {
+                                addLogEntry(`Email sent via EmailJS to ${record.email}`, 'success');
+                                emailSent = true;
+                                emailSentCount++;
+                            } else {
+                                throw new Error(`EmailJS Status: ${response.status} - ${response.text}`);
+                            }
+                        }
+
+                        // Final Status Update
+                        if (emailSent) {
+                            generatedCertificates[index].dispatchStatus = 'sent';
+                            generatedCertificates[index].sentDate = new Date().toISOString();
+                        } else {
+                            throw new Error("All dispatch methods failed.");
+                        }
+
+                    } catch (e) {
+                        console.error(`Email dispatch failed for ${record.email}:`, e);
+                        addLogEntry(`Email dispatch error: ${e.message || JSON.stringify(e)}`, 'error');
+                        generatedCertificates[index].dispatchStatus = 'failed';
+                        generatedCertificates[index].error = e.message;
+                        updateProcessingItem(index, 'failed');
+                    }
+                }
+
+                updateProcessingItem(index, 'completed');
+
+            } catch (error) {
+                processedCount++;
+                failedCount++;
+                addLogEntry(`Error processing ${record.name}: ${error.message}`, 'error');
+
+                generatedCertificates[index] = {
+                    ...record,
+                    status: 'failed',
+                    error: error.message
+                };
+                updateProcessingItem(index, 'failed');
+            }
+
+            // Update progress
+            updateProgress();
+
+            // Preview current if selected
+            if (index === currentCertIndex) updateCertificatePreview();
+        }
+
+        function generateUUID() {
+            return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+                var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+                return v.toString(16);
+            });
+        }
+
+        // Local Storage Upload & Backend Sync
+        async function uploadToBackend(record, pdfBlob) {
+            try {
+                // 1. Create FormData
+                const formData = new FormData();
+                formData.append('pdf', pdfBlob, `Certificate-${record.certId || 'doc'}.pdf`);
+                formData.append('name', record.name);
+                formData.append('email', record.email);
+                formData.append('course', record.course);
+                formData.append('uuid', record.uuid);
+                formData.append('certId', record.certId || '');
+
+                // 2. Upload to Server
+                addLogEntry(`Uploading certificate to server...`, 'info');
+                const response = await fetch('/api/certificates', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Server upload failed: ${response.status} ${response.statusText}`);
+                }
+
+                const result = await response.json();
+                if (result.success) {
+                    addLogEntry('Certificate uploaded to server successfully', 'success');
+                    return { success: true, savedRecord: result.certificate };
+                } else {
+                    throw new Error(result.message || 'Unknown server error');
+                }
+
+            } catch (error) {
+                console.warn('Backend upload failed, falling back to local only:', error);
+                addLogEntry(`Backend upload failed: ${error.message}. Keeping local copy only.`, 'warning');
+                // We still return true because we can try to send email via client-side fallback
+                return { success: true, localOnly: true };
+            }
+        }
+
+        function sleep(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
+        // Create certificate HTML
+        function createCertificateHTML(record, uuid) {
+            // Use global template variable if available, otherwise try localStorage
+            let designTemplate = template;
+            if (!designTemplate) {
+                designTemplate = localStorage.getItem('certificateDesign');
+            }
+
+            let html = '';
+
+            try {
+                if (designTemplate) {
+                    // Use saved template
+                    const design = typeof designTemplate === 'string' ? JSON.parse(designTemplate) : designTemplate;
+                    // Add uuid to data for QR code rendering
+                    const dataWithUuid = { ...record, uuid: uuid };
+                    html = renderTemplate(design, dataWithUuid);
+                } else {
+                    throw new Error("No template found");
+                }
+            } catch (e) {
+                console.warn("Template rendering failed, using default:", e);
+                // Default template fallback
+                html = `
+                    <div style="width: 800px; height: 600px; background: white; padding: 2rem; position: relative; border: 2px solid #2563EB;">
+                        <div style="text-align: center;">
+                            <h1 style="color: #2563EB; font-family: 'Poppins', sans-serif; margin-top: 2rem;">CERTIFICATE OF COMPLETION</h1>
+                            <p style="margin-top: 3rem;">This certifies that</p>
+                            <h2 style="color: #1F2937; font-size: 2.5rem; margin: 1rem 0;">${record.name || 'Student Name'}</h2>
+                            <p>has successfully completed</p>
+                            <h3 style="color: #7C3AED; font-size: 1.5rem; margin: 1rem 0;">${record.course || 'The Course'}</h3>
+                            <p style="margin-top: 2rem;">Date: ${record.date || new Date().toLocaleDateString()}</p>
+                            <p>Certificate ID: ${record.certId || uuid.substring(0, 8)}</p>
+                            <div style="margin-top: 3rem; border-top: 1px solid #ccc; padding-top: 1rem; width: 80%; margin-left: auto; margin-right: auto;">
+                                <p>${record.organization || 'Organization Name'}</p>
+                            </div>
+                        </div>
+                        <div style="position: absolute; bottom: 20px; right: 20px; width: 100px; height: 100px;" id="qrcode-${uuid}"></div>
+                    </div>
+                `;
+            }
+
+            return html;
+        }
+
+        // Render template with data
+        function renderTemplate(design, data) {
+            let html = `<div style="width: 800px; height: 600px; background: ${design.backgroundColor || 'white'}; position: relative;">`;
+
+            // Add background image if exists
+            if (design.backgroundImage) {
+                html += `<img src="${design.backgroundImage}" style="width: 100%; height: 100%; position: absolute; top: 0; left: 0; object-fit: cover;">`;
+            }
+
+            // Add elements (QR Code, etc)
+            if (design.elements) {
+                design.elements.forEach(element => {
+                    if (element.type === 'qrcode') {
+                        // We render a placeholder div for the QR code library to target later
+                        const uuid = data.uuid || 'preview'; // Fallback for preview
+
+                        html += `
+                            <div id="qrcode-${uuid}" style="
+                                position: absolute; 
+                                left: ${element.x}px; 
+                                top: ${element.y}px; 
+                                width: ${element.size}px; 
+                                height: ${element.size}px;
+                                z-index: 10;
+                            "></div>
+                        `;
+                    }
+                });
+            }
+
+            // Add text elements
+            design.textElements.forEach(element => {
+                let text = element.text;
+
+                // Replace placeholders with data
+                if (element.isPlaceholder) {
+                    const placeholder = element.text.match(/\{([^}]+)\}/);
+                    if (placeholder) {
+                        const field = placeholder[1].toLowerCase();
+                        text = data[field] || element.text;
+                    }
+                }
+
+                html += `
+                    <div style="position: absolute; left: ${element.x}px; top: ${element.y}px; font-size: ${element.fontSize}px; color: ${element.color}; font-family: ${element.fontFamily}; font-weight: ${element.fontWeight};">
+                        ${text}
+                    </div>
+                `;
+            });
+
+            html += '</div>';
+            return html;
+        }
+
+        // Add to processing list
+        function addToProcessingList(record, index) {
+            const processingItem = document.createElement('div');
+            processingItem.className = 'processing-item active';
+            processingItem.id = `processing-${index}`;
+
+            processingItem.innerHTML = `
+                <div class="processing-info">
+                    <div>
+                        <div class="processing-name">${record.name || 'Unknown'}</div>
+                        <div class="processing-email">${record.email || 'No email'}</div>
+                    </div>
+                </div>
+                <div class="processing-status">
+                    <div class="status-spinner"></div>
+                    <span>Processing</span>
+                </div>
+            `;
+
+            processingList.appendChild(processingItem);
+        }
+
+        // Update processing item
+        function updateProcessingItem(index, status) {
+            const item = document.getElementById(`processing-${index}`);
+            if (!item) return;
+
+            item.classList.remove('active');
+            item.classList.add(status);
+
+            const statusEl = item.querySelector('.processing-status');
+            if (statusEl) {
+                if (status === 'completed') {
+                    statusEl.innerHTML = `
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <span style="color: #10B981;"><i class="fas fa-check"></i> Completed</span>
+                            <button onclick="viewCertificate(${index})" style="padding: 2px 8px; border: 1px solid #10B981; background: transparent; color: #10B981; border-radius: 4px; cursor: pointer; font-size: 0.8rem;">View</button>
+                        </div>
+                    `;
+                } else if (status === 'failed') {
+                    // Show error tooltip/text
+                    const cert = generatedCertificates[index];
+                    const errorMsg = cert && cert.error ? cert.error : 'Failed';
+                    statusEl.innerHTML = `<div style="display:flex; flex-direction:column; align-items:flex-end;">
+                        <span style="color: #F43F5E;"><i class="fas fa-times"></i> Failed</span>
+                        <span style="font-size: 0.7em; color: #F43F5E; max-width: 150px; text-align: right;">${errorMsg}</span>
+                    </div>`;
+                } else if (status === 'sending') {
+                    statusEl.innerHTML = `
+                        <div style="display: flex; align-items: center; gap: 5px; color: #3B82F6;">
+                            <i class="fas fa-paper-plane fa-bounce"></i> <span>Sending...</span>
+                        </div>
+                    `;
+                }
+            }
+        }
+
+        // Update batch progress
+        function updateBatchProgress(batchIndex, status) {
+            const batchItem = document.getElementById(`batch-${batchIndex}`);
+            if (!batchItem) return;
+
+            batchItem.classList.remove('active', 'completed');
+            batchItem.classList.add(status);
+
+            const statusEl = batchItem.querySelector('.batch-status');
+            if (statusEl) {
+                statusEl.textContent = status === 'processing' ? 'Processing' :
+                    status === 'completed' ? 'Completed' : 'Pending';
+                statusEl.className = `batch-status status-${status}`;
+            }
+        }
+
+        // Update progress
+        function updateProgress() {
+            const percent = totalRecords > 0 ? Math.round((processedCount / totalRecords) * 100) : 0;
+
+            progressFillLarge.style.width = `${percent}%`;
+            progressPercent.textContent = `${percent}%`;
+            processedCountEl.textContent = processedCount;
+            successCountEl.textContent = successCount;
+            failedCountEl.textContent = failedCount;
+
+            // Show retry button if there are failures
+            if (failedCount > 0 && !isGenerating) {
+                retryBtn.style.display = 'flex';
+            } else {
+                retryBtn.style.display = 'none';
+            }
+
+            // Update certificate navigation
+            currentCertIndexEl.textContent = Math.min(currentCertIndex + 1, totalRecords);
+            prevCertBtn.disabled = currentCertIndex === 0;
+            nextCertBtn.disabled = currentCertIndex >= totalRecords - 1 || !generatedCertificates[currentCertIndex + 1];
+        }
+
+        // Update certificate preview
+        function updateCertificatePreview() {
+            if (!generatedCertificates[currentCertIndex]) return;
+
+            // Render existing HTML
+            const certData = generatedCertificates[currentCertIndex];
+            // Remove any hidden temp style for preview
+            // Actually, we can just insert the HTML string but ensure images are loaded
+            // Note: The HTML might contain unique IDs (like qrcode) that might conflict if we are not careful
+            // But since it's just a preview div, it should be fine.
+
+            // However, the QR code won't auto-render just by setting innerHTML unless we call new QRCode again.
+            // A better approach for preview is to show the generated image if available (but we only have it effectively as blob for upload)
+            // Or just re-render.
+
+            certificatePreview.innerHTML = certData.html;
+
+            // Re-render QR code
+            // The HTML has an empty div with id `qrcode-${uuid}`. We need to find it and fill it.
+            const uuid = certData.uuid;
+            const qrEl = certificatePreview.querySelector(`[id^='qrcode-']`);
+            if (qrEl) {
+                qrEl.innerHTML = ''; // Clear existing
+                new QRCode(qrEl, {
+                    text: `${window.location.origin}/verification-result.html?id=${uuid}`,
+                    width: parseInt(qrEl.style.width) || 100,
+                    height: parseInt(qrEl.style.height) || 100,
+                    correctLevel: QRCode.CorrectLevel.H
+                });
+            }
+        }
+
+        function showPreviousCertificate() {
+            if (currentCertIndex > 0) {
+                currentCertIndex--;
+                updateCertificatePreview();
+                updateProgress();
+            }
+        }
+
+        function showNextCertificate() {
+            if (currentCertIndex < totalRecords - 1 && generatedCertificates[currentCertIndex + 1]) {
+                currentCertIndex++;
+                updateCertificatePreview();
+                updateProgress();
+            }
+        }
+
+        function viewCertificate(index) {
+            currentCertIndex = index;
+            updateCertificatePreview();
+            updateProgress();
+            // Scroll to preview
+            document.querySelector('.preview-section').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function clearLog() {
+            const consoleWindow = document.getElementById('consoleWindow');
+            // Keep the first few lines? Or clear all?
+            consoleWindow.innerHTML = '';
+            addLogEntry('Log cleared by user', 'info');
+        }
+
+        function exportLog() {
+            // Simple text export
+            const logText = Array.from(document.querySelectorAll('.log-entry')).map(entry => {
+                const time = entry.querySelector('.log-timestamp').innerText;
+                const msg = entry.querySelector('.log-message').innerText;
+                return `[${time}] ${msg}`;
+            }).join('\n');
+
+            const blob = new Blob([logText], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `generation-log-${new Date().toISOString().slice(0, 10)}.txt`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        }
+
+        // Add log entry
+        function addLogEntry(message, type = 'info') {
+            const entry = document.createElement('div');
+            entry.className = 'log-entry';
+
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('en-US', { hour12: false });
+
+            const typeClass = type === 'success' ? 'log-success' :
+                type === 'error' ? 'log-error' :
+                    type === 'warning' ? 'log-warning' : 'log-info';
+
+            entry.innerHTML = `
+                <span class="log-timestamp">${timeString}</span>
+                <span class="log-message ${typeClass}">> ${message}</span>
+            `;
+
+            consoleWindow.appendChild(entry);
+            consoleWindow.scrollTop = consoleWindow.scrollHeight;
+        }
+
+        // View log (placeholder)
+        function viewLog() {
+            // Scroll to console
+            document.querySelector('.console-section').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Define missing updateUI function 
+        function updateUI() {
+            // Initial UI state setup if needed
+        }
+
+        // Run Init
+        window.addEventListener('DOMContentLoaded', init);
+
+    </script>
+</body>
+
+</html>

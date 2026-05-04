@@ -1,0 +1,1327 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CertVerify Pro | Certificate Designer</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- jQuery (Required for Spectrum) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+    <!-- Color Picker Library -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/spectrum/1.8.1/spectrum.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/spectrum/1.8.1/spectrum.min.js"></script>
+
+    <!-- Fabric.js Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js"></script>
+
+    <!-- PDF.js for rendering PDF backgrounds -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
+    <script>
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
+    </script>
+
+    <style>
+        /* ===== GLOBAL DESIGN SYSTEM ===== */
+        :root {
+            /* Color System */
+            --primary-blue: #2563EB;
+            --primary-purple: #7C3AED;
+            --success-green: #10B981;
+            --error-red: #F43F5E;
+            --warning-amber: #F59E0B;
+            --background-light: #F3F4F6;
+            --background-white: #FFFFFF;
+            --text-dark: #1F2937;
+            --text-gray: #6B7280;
+            --border-light: #E5E7EB;
+            --sidebar-bg: #1E293B;
+            --sidebar-text: #F1F5F9;
+
+            /* Typography */
+            --font-primary: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            --font-heading: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+
+            /* Spacing */
+            --spacing-xs: 0.5rem;
+            --spacing-sm: 1rem;
+            --spacing-md: 1.5rem;
+            --spacing-lg: 2rem;
+            --spacing-xl: 3rem;
+
+            /* Shadows */
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+
+            /* Border Radius */
+            --radius-sm: 0.375rem;
+            --radius-md: 0.5rem;
+            --radius-lg: 0.75rem;
+            --radius-xl: 1rem;
+        }
+
+        /* ===== BASE STYLES ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-primary);
+            background-color: var(--background-light);
+            color: var(--text-dark);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        button,
+        input {
+            font-family: inherit;
+            font-size: inherit;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 var(--spacing-md);
+        }
+
+        /* ===== DESIGNER LAYOUT ===== */
+        /* Sidebar */
+        .sidebar {
+            width: 260px;
+            background-color: var(--sidebar-bg);
+            color: var(--sidebar-text);
+            min-height: 100vh;
+            padding: var(--spacing-md) 0;
+            position: fixed;
+            left: 0;
+            top: 0;
+            display: flex;
+            flex-direction: column;
+            z-index: 100;
+        }
+
+        .sidebar-header {
+            padding: 0 var(--spacing-md) var(--spacing-lg);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: var(--spacing-md);
+        }
+
+        .dashboard-logo {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+
+        .logo-icon-sidebar {
+            font-size: 1.75rem;
+            color: var(--primary-blue);
+        }
+
+        .logo-text-sidebar {
+            font-family: var(--font-heading);
+            font-weight: 700;
+            font-size: 1.25rem;
+        }
+
+        .nav-menu {
+            flex: 1;
+            padding: 0 var(--spacing-md);
+        }
+
+        .nav-list {
+            list-style: none;
+        }
+
+        .nav-item {
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            padding: var(--spacing-sm) var(--spacing-md);
+            border-radius: var(--radius-md);
+            transition: all 0.2s ease;
+        }
+
+        .nav-link:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .nav-link.active {
+            background-color: var(--primary-blue);
+            font-weight: 600;
+        }
+
+        .nav-icon {
+            width: 20px;
+            text-align: center;
+        }
+
+        .sidebar-footer {
+            padding: var(--spacing-md);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .back-button {
+            width: 100%;
+            background-color: rgba(255, 255, 255, 0.1);
+            color: var(--sidebar-text);
+            border: none;
+            padding: var(--spacing-sm);
+            border-radius: var(--radius-md);
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--spacing-xs);
+        }
+
+        .back-button:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: 260px;
+            padding: var(--spacing-md);
+        }
+
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--spacing-lg);
+            padding-bottom: var(--spacing-md);
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .page-title {
+            font-family: var(--font-heading);
+            font-size: 1.75rem;
+            font-weight: 700;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: var(--spacing-sm);
+        }
+
+        .primary-btn {
+            background-color: var(--primary-blue);
+            color: white;
+            border: none;
+            padding: var(--spacing-sm) var(--spacing-lg);
+            border-radius: var(--radius-md);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-xs);
+        }
+
+        .primary-btn:hover {
+            background-color: #1d4ed8;
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .secondary-btn {
+            background-color: white;
+            color: var(--text-dark);
+            border: 1px solid var(--border-light);
+            padding: var(--spacing-sm) var(--spacing-lg);
+            border-radius: var(--radius-md);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-xs);
+        }
+
+        .secondary-btn:hover {
+            background-color: var(--background-light);
+            border-color: var(--text-gray);
+        }
+
+        /* Designer Layout */
+        .designer-layout {
+            display: flex;
+            gap: var(--spacing-lg);
+            height: calc(100vh - 120px);
+        }
+
+        /* Control Panel */
+        .control-panel {
+            width: 320px;
+            background-color: var(--background-white);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-lg);
+            box-shadow: var(--shadow-sm);
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-lg);
+        }
+
+        .control-section {
+            /* margin-bottom: var(--spacing-xl); */
+        }
+
+        .section-title {
+            font-family: var(--font-heading);
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin-bottom: var(--spacing-md);
+            padding-bottom: var(--spacing-xs);
+            border-bottom: 2px solid var(--primary-blue);
+        }
+
+        .control-group {
+            margin-bottom: var(--spacing-md);
+        }
+
+        .control-label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: var(--spacing-xs);
+            font-size: 0.875rem;
+            color: var(--text-gray);
+        }
+
+        .control-input {
+            width: 100%;
+            padding: var(--spacing-sm);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-md);
+            font-size: 0.875rem;
+            transition: all 0.2s ease;
+        }
+
+        .control-input:focus {
+            outline: none;
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        /* File Upload */
+        .file-upload {
+            border: 2px dashed var(--border-light);
+            border-radius: var(--radius-md);
+            padding: var(--spacing-lg);
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .file-upload:hover {
+            border-color: var(--primary-blue);
+            background-color: rgba(37, 99, 235, 0.05);
+        }
+
+        .upload-icon {
+            font-size: 2rem;
+            color: var(--text-gray);
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .upload-text {
+            font-weight: 500;
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .upload-hint {
+            font-size: 0.75rem;
+            color: var(--text-gray);
+        }
+
+        /* Slider */
+        .slider-container {
+            padding: var(--spacing-sm) 0;
+        }
+
+        .slider-with-value {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+        }
+
+        .slider {
+            flex: 1;
+            height: 6px;
+            -webkit-appearance: none;
+            appearance: none;
+            background: var(--border-light);
+            border-radius: 3px;
+            outline: none;
+        }
+
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--primary-blue);
+            cursor: pointer;
+        }
+
+        .slider-value {
+            width: 50px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+
+        /* Font Selector */
+        .font-selector {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: var(--spacing-sm);
+        }
+
+        .font-option {
+            padding: var(--spacing-sm);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-md);
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 0.875rem;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .font-option:hover {
+            border-color: var(--primary-blue);
+            background-color: rgba(37, 99, 235, 0.05);
+        }
+
+        .font-option.selected {
+            border-color: var(--primary-blue);
+            background-color: rgba(37, 99, 235, 0.1);
+            font-weight: 600;
+        }
+
+        /* Add Elements Buttons */
+        .add-elements-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: var(--spacing-sm);
+        }
+
+        .add-element-btn {
+            padding: var(--spacing-sm);
+            background-color: var(--background-light);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.2s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .add-element-btn:hover {
+            border-color: var(--primary-blue);
+            background-color: rgba(37, 99, 235, 0.05);
+        }
+
+        .add-element-btn i {
+            font-size: 1.5rem;
+            color: var(--primary-blue);
+        }
+
+        /* Canvas Area */
+        .canvas-area {
+            flex: 1;
+            background-color: var(--background-white);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm);
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            background-color: #e5e5f7;
+            background-image: radial-gradient(#444cf7 0.5px, transparent 0.5px), radial-gradient(#444cf7 0.5px, #e5e5f7 0.5px);
+            background-size: 20px 20px;
+        }
+
+        .canvas-container-wrapper {
+            box-shadow: var(--shadow-lg);
+        }
+
+        /* Canvas Controls */
+        .canvas-controls {
+            position: absolute;
+            bottom: var(--spacing-md);
+            right: var(--spacing-md);
+            display: flex;
+            gap: var(--spacing-xs);
+            z-index: 10;
+        }
+
+        .canvas-btn {
+            background-color: white;
+            border: 1px solid var(--border-light);
+            width: 36px;
+            height: 36px;
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .canvas-btn:hover {
+            background-color: var(--background-light);
+            border-color: var(--text-gray);
+        }
+
+        /* Layer Panel (Right Side) */
+        .layer-panel {
+            width: 250px;
+            background-color: var(--background-white);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-md);
+            box-shadow: var(--shadow-sm);
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .layer-list {
+            list-style: none;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .layer-item {
+            padding: var(--spacing-xs) var(--spacing-sm);
+            border-bottom: 1px solid var(--border-light);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .layer-item:hover {
+            background-color: var(--background-light);
+        }
+
+        .layer-item.active {
+            background-color: rgba(37, 99, 235, 0.1);
+            border-left: 3px solid var(--primary-blue);
+        }
+
+        .layer-name {
+            font-size: 0.875rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 120px;
+        }
+
+        .layer-actions {
+            display: flex;
+            gap: 5px;
+        }
+
+        .layer-btn {
+            border: none;
+            background: none;
+            cursor: pointer;
+            color: var(--text-gray);
+            font-size: 0.75rem;
+        }
+
+        .layer-btn:hover {
+            color: var(--primary-blue);
+        }
+
+        /* Spectrum Overrides */
+        .sp-replacer {
+            border: 1px solid var(--border-light) !important;
+            border-radius: var(--radius-md) !important;
+            background: white !important;
+            padding: 5px !important;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .sp-preview {
+            border-radius: var(--radius-sm) !important;
+            width: 20px;
+            height: 20px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+            .designer-layout {
+                flex-direction: column;
+                height: auto;
+            }
+
+            .control-panel,
+            .layer-panel {
+                width: 100%;
+                max-height: 400px;
+            }
+
+            .layer-panel {
+                order: 3;
+            }
+
+            .canvas-area {
+                min-height: 600px;
+                order: 2;
+            }
+
+            .control-panel {
+                order: 1;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Sidebar Navigation -->
+    <nav class="sidebar">
+        <div class="sidebar-header">
+            <div class="dashboard-logo">
+                <i class="fas fa-certificate logo-icon-sidebar"></i>
+                <span class="logo-text-sidebar">CertVerify</span>
+            </div>
+        </div>
+
+        <div class="nav-menu">
+            <ul class="nav-list">
+                <li class="nav-item">
+                    <a href="admin-dashboard.html" class="nav-link">
+                        <i class="fas fa-chart-line nav-icon"></i>
+                        <span class="nav-text">Dashboard</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="certificate-designer.html" class="nav-link active">
+                        <i class="fas fa-paint-brush nav-icon"></i>
+                        <span class="nav-text">Create Design</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="bulk-upload.html" class="nav-link">
+                        <i class="fas fa-file-upload nav-icon"></i>
+                        <span class="nav-text">Bulk Upload</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="generation-engine.html" class="nav-link">
+                        <i class="fas fa-cogs nav-icon"></i>
+                        <span class="nav-text">Generation</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="dispatch-status.html" class="nav-link">
+                        <i class="fas fa-paper-plane nav-icon"></i>
+                        <span class="nav-text">Dispatch Status</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <div class="sidebar-footer">
+            <button class="back-button" id="backBtn">
+                <i class="fas fa-arrow-left"></i>
+                <span class="back-text">Back to Dashboard</span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Top Bar -->
+        <div class="top-bar">
+            <h1 class="page-title">Certificate Designer</h1>
+            <div class="action-buttons">
+                <button class="secondary-btn" id="clearCanvasBtn">
+                    <i class="fas fa-trash-alt"></i>
+                    Clear Canvas
+                </button>
+                <button class="primary-btn" id="saveDesignBtn">
+                    <i class="fas fa-save"></i>
+                    Save Design
+                </button>
+            </div>
+        </div>
+
+        <!-- Designer Layout -->
+        <div class="designer-layout">
+            <!-- Left Control Panel -->
+            <div class="control-panel">
+
+                <!-- Add Elements -->
+                <div class="control-section">
+                    <h3 class="section-title">Add Elements</h3>
+                    <div class="add-elements-grid">
+                        <div class="add-element-btn" id="addNameBtn">
+                            <i class="fas fa-user"></i>
+                            <span>Name</span>
+                        </div>
+                        <div class="add-element-btn" id="addCourseBtn">
+                            <i class="fas fa-graduation-cap"></i>
+                            <span>Course</span>
+                        </div>
+                        <div class="add-element-btn" id="addDateBtn">
+                            <i class="far fa-calendar-alt"></i>
+                            <span>Date</span>
+                        </div>
+                        <div class="add-element-btn" id="addIDBtn">
+                            <i class="fas fa-fingerprint"></i>
+                            <span>Cert ID</span>
+                        </div>
+                        <div class="add-element-btn" id="addTextBtn">
+                            <i class="fas fa-font"></i>
+                            <span>Text</span>
+                        </div>
+                        <div class="add-element-btn" id="addQRBtn">
+                            <i class="fas fa-qrcode"></i>
+                            <span>QR Code</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Background -->
+                <div class="control-section">
+                    <h3 class="section-title">Background</h3>
+                    <div class="control-group">
+                        <div class="file-upload" id="backgroundUpload">
+                            <i class="fas fa-cloud-upload-alt upload-icon"></i>
+                            <div class="upload-text">Upload Image</div>
+                            <div class="upload-hint">JPG, PNG, PDF (Max 5MB)</div>
+                            <input type="file" id="backgroundInput" accept="image/*,application/pdf"
+                                style="display: none;">
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label">Background Color</label>
+                        <input type="text" id="backgroundColor">
+                    </div>
+                </div>
+
+                <!-- Properties Panel (Dynamic) -->
+                <div class="control-section" id="propertiesPanel" style="display:none;">
+                    <h3 class="section-title">Properties</h3>
+
+                    <div class="control-group">
+                        <label class="control-label">Text Content</label>
+                        <input type="text" id="propText" class="control-input">
+                    </div>
+
+                    <div class="control-group">
+                        <label class="control-label">Font Family</label>
+                        <div class="font-selector">
+                            <div class="font-option" data-font="'Poppins', sans-serif">Poppins</div>
+                            <div class="font-option" data-font="'Inter', sans-serif">Inter</div>
+                            <div class="font-option" data-font="'Times New Roman', serif">Times</div>
+                            <div class="font-option" data-font="'Courier New', monospace">Courier</div>
+                            <div class="font-option" data-font="'Great Vibes', cursive">Cursive</div>
+                            <div class="font-option" data-font="'Arial', sans-serif">Arial</div>
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <label class="control-label">Font Size</label>
+                        <div class="slider-with-value">
+                            <input type="range" min="10" max="100" class="slider" id="propFontSize">
+                            <span class="slider-value" id="propFontSizeValue">20</span>
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <label class="control-label">Text Color</label>
+                        <input type="text" id="propColor">
+                    </div>
+
+                    <div class="control-group">
+                        <label class="control-label">Style</label>
+                        <div style="display: flex; gap: 10px;">
+                            <button class="secondary-btn" id="propBold" style="flex:1; justify-content: center;"><i
+                                    class="fas fa-bold"></i></button>
+                            <button class="secondary-btn" id="propItalic" style="flex:1; justify-content: center;"><i
+                                    class="fas fa-italic"></i></button>
+                            <button class="secondary-btn" id="propUnderline" style="flex:1; justify-content: center;"><i
+                                    class="fas fa-underline"></i></button>
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <button class="primary-btn" id="deleteSelectedBtn"
+                            style="width: 100%; background-color: var(--error-red); justify-content: center;">
+                            <i class="fas fa-trash"></i> Delete Element
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Canvas Area -->
+            <div class="canvas-area">
+                <canvas id="mainCanvas" width="800" height="600"></canvas>
+
+                <div class="canvas-controls">
+                    <button class="canvas-btn" id="zoomOutBtn"><i class="fas fa-minus"></i></button>
+                    <button class="canvas-btn" id="resetZoomBtn">100%</button>
+                    <button class="canvas-btn" id="zoomInBtn"><i class="fas fa-plus"></i></button>
+                </div>
+            </div>
+
+            <!-- Right Layer Panel -->
+            <div class="layer-panel">
+                <h3 class="section-title">Layers</h3>
+                <ul class="layer-list" id="layerList">
+                    <!-- Layers will be added here -->
+                    <li class="layer-item" style="color: var(--text-gray); font-size: 0.8rem; justify-content: center;">
+                        No layers</li>
+                </ul>
+                <div style="margin-top: 10px; display: flex; gap: 5px; justify-content: space-between;">
+                    <button class="secondary-btn" id="bringFrontBtn" title="Bring to Front" style="padding: 5px;"><i
+                            class="fas fa-angle-double-up"></i></button>
+                    <button class="secondary-btn" id="bringForwardBtn" title="Bring Forward" style="padding: 5px;"><i
+                            class="fas fa-angle-up"></i></button>
+                    <button class="secondary-btn" id="sendBackwardBtn" title="Send Backward" style="padding: 5px;"><i
+                            class="fas fa-angle-down"></i></button>
+                    <button class="secondary-btn" id="sendBackBtn" title="Send to Back" style="padding: 5px;"><i
+                            class="fas fa-angle-double-down"></i></button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Init Fabric Canvas
+        const canvas = new fabric.Canvas('mainCanvas', {
+            backgroundColor: '#fff',
+            preserveObjectStacking: true,
+            selection: true
+        });
+
+        // Global State
+        let isInternalUpdate = false; // To prevent loops between UI and Canvas events
+
+        // DOM Elements
+        const textPropPanel = document.getElementById('propertiesPanel');
+        const propText = document.getElementById('propText');
+        const propFontSize = document.getElementById('propFontSize');
+        const propFontSizeValue = document.getElementById('propFontSizeValue');
+        const propBold = document.getElementById('propBold');
+        const propItalic = document.getElementById('propItalic');
+        const propUnderline = document.getElementById('propUnderline');
+        const layerList = document.getElementById('layerList');
+
+        // --- Initialization ---
+        $(function () {
+            // Color Pickers
+            $("#backgroundColor").spectrum({
+                color: "#ffffff",
+                showInput: true,
+                preferredFormat: "hex",
+                move: function (color) {
+                    canvas.setBackgroundColor(color.toHexString(), canvas.renderAll.bind(canvas));
+                }
+            });
+
+            $("#propColor").spectrum({
+                color: "#000000",
+                showInput: true,
+                preferredFormat: "hex",
+                move: function (color) {
+                    const activeObj = canvas.getActiveObject();
+                    if (activeObj && (activeObj.type === 'i-text' || activeObj.type === 'text')) {
+                        activeObj.set('fill', color.toHexString());
+                        canvas.requestRenderAll();
+                    }
+                }
+            });
+
+            // Load saved design if any
+            loadDesign();
+        });
+
+        // --- Canvas Events ---
+        canvas.on('selection:created', handleSelection);
+        canvas.on('selection:updated', handleSelection);
+        canvas.on('selection:cleared', () => {
+            textPropPanel.style.display = 'none';
+            updateLayerListHighlight();
+        });
+        canvas.on('object:modified', () => {
+            updatePropertiesPanel();
+        });
+        canvas.on('object:added', updateLayerList);
+        canvas.on('object:removed', updateLayerList);
+
+        function handleSelection(e) {
+            const activeObj = e.selected[0];
+            if (!activeObj) return;
+
+            // Show properties if it's text
+            if (activeObj.type === 'i-text' || activeObj.type === 'text') {
+                textPropPanel.style.display = 'block';
+                updatePropertiesPanel();
+            } else if (activeObj.type === 'rect' || activeObj.type === 'group') {
+                // For QR code placeholders or generic shapes
+                textPropPanel.style.display = 'block';
+                // Hide text specific inputs if needed, or just show delete
+            } else {
+                textPropPanel.style.display = 'block'; // At least show delete
+            }
+
+            updateLayerListHighlight();
+        }
+
+        function updatePropertiesPanel() {
+            isInternalUpdate = true;
+            const activeObj = canvas.getActiveObject();
+            if (!activeObj) return;
+
+            if (activeObj.type === 'i-text' || activeObj.type === 'text') {
+                propText.value = activeObj.text;
+                propFontSize.value = activeObj.fontSize;
+                propFontSizeValue.innerText = activeObj.fontSize;
+                $("#propColor").spectrum("set", activeObj.fill);
+
+                // Highlight active font
+                document.querySelectorAll('.font-option').forEach(opt => {
+                    const font = opt.dataset.font.replace(/'/g, '').split(',')[0].trim();
+                    if (activeObj.fontFamily.includes(font)) {
+                        opt.classList.add('selected');
+                    } else {
+                        opt.classList.remove('selected');
+                    }
+                });
+            }
+            isInternalUpdate = false;
+        }
+
+        // --- Add Elements ---
+        function addText(text, options = {}) {
+            const iText = new fabric.IText(text, {
+                left: options.x || 100,
+                top: options.y || 100,
+                fontFamily: options.fontFamily || "'Poppins', sans-serif",
+                fill: options.color || '#000000',
+                fontSize: options.fontSize || 24,
+                fontWeight: options.fontWeight || 'normal',
+                ...options
+            });
+            canvas.add(iText);
+            canvas.setActiveObject(iText);
+        }
+
+        document.getElementById('addNameBtn').onclick = () => addText('{Name}', { fontSize: 40, fontWeight: 'bold' });
+        document.getElementById('addCourseBtn').onclick = () => addText('{Course}', { fontSize: 30, color: '#2563EB' });
+        document.getElementById('addDateBtn').onclick = () => addText('{Date}', { fontSize: 18, top: 500, left: 600 });
+        document.getElementById('addIDBtn').onclick = () => addText('ID: {CertID}', { fontSize: 14, top: 550 });
+        document.getElementById('addTextBtn').onclick = () => addText('Double click to edit');
+
+        document.getElementById('addQRBtn').onclick = () => {
+            // Create a group to represent QR Code
+            const rect = new fabric.Rect({
+                width: 100, height: 100, fill: '#f3f4f6', stroke: '#000', strokeDashArray: [5, 5]
+            });
+            const text = new fabric.IText('QR Code', {
+                fontSize: 14, originX: 'center', originY: 'center', left: 50, top: 50
+            });
+
+            const group = new fabric.Group([rect, text], {
+                left: 350, top: 400,
+                data: { type: 'qrcode' } // Custom data to identify it
+            });
+
+            canvas.add(group);
+            canvas.setActiveObject(group);
+        };
+
+        // --- Background Handling ---
+        document.getElementById('backgroundUpload').onclick = () => document.getElementById('backgroundInput').click();
+        document.getElementById('backgroundInput').onchange = function (e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            if (file.type === 'application/pdf') {
+                const fileReader = new FileReader();
+                fileReader.onload = function () {
+                    const typedarray = new Uint8Array(this.result);
+                    pdfjsLib.getDocument(typedarray).promise.then(function (pdf) {
+                        pdf.getPage(1).then(function (page) {
+                            const viewport = page.getViewport({ scale: 2.0 }); // Render at high res
+                            const hiddenCanvas = document.createElement('canvas');
+                            const context = hiddenCanvas.getContext('2d');
+                            hiddenCanvas.height = viewport.height;
+                            hiddenCanvas.width = viewport.width;
+
+                            const renderContext = {
+                                canvasContext: context,
+                                viewport: viewport
+                            };
+                            page.render(renderContext).promise.then(function () {
+                                const imgData = hiddenCanvas.toDataURL('image/png');
+                                fabric.Image.fromURL(imgData, function (img) {
+                                    const scale = Math.min(canvas.width / img.width, canvas.height / img.height);
+                                    canvas.setBackgroundImage(img, canvas.renderAll.bind(canvas), {
+                                        scaleX: canvas.width / img.width,
+                                        scaleY: canvas.height / img.height,
+                                        originX: 'left', originY: 'top'
+                                    });
+                                    // Save the data URL for export (converted to PNG)
+                                    canvas.bgImageSrc = imgData;
+                                });
+                            });
+                        });
+                    });
+                };
+                fileReader.readAsArrayBuffer(file);
+            } else {
+                const reader = new FileReader();
+                reader.onload = function (f) {
+                    fabric.Image.fromURL(f.target.result, function (img) {
+                        const scale = Math.min(canvas.width / img.width, canvas.height / img.height);
+
+                        canvas.setBackgroundImage(img, canvas.renderAll.bind(canvas), {
+                            scaleX: canvas.width / img.width,
+                            scaleY: canvas.height / img.height,
+                            originX: 'left', originY: 'top'
+                        });
+
+                        canvas.bgImageSrc = f.target.result;
+                    });
+                };
+                reader.readAsDataURL(file);
+            }
+        };
+
+        // --- Property Controls ---
+        propText.oninput = function () {
+            if (isInternalUpdate) return;
+            const activeObj = canvas.getActiveObject();
+            if (activeObj && (activeObj.type === 'i-text' || activeObj.type === 'text')) {
+                activeObj.set('text', this.value);
+                canvas.requestRenderAll();
+                updateLayerList(); // name changes
+            }
+        };
+
+        propFontSize.oninput = function () {
+            if (isInternalUpdate) return;
+            const val = parseInt(this.value);
+            propFontSizeValue.innerText = val;
+            const activeObj = canvas.getActiveObject();
+            if (activeObj) {
+                activeObj.set('fontSize', val);
+                canvas.requestRenderAll();
+            }
+        };
+
+        document.querySelectorAll('.font-option').forEach(opt => {
+            opt.onclick = function () {
+                const font = this.dataset.font;
+                const activeObj = canvas.getActiveObject();
+                if (activeObj) {
+                    activeObj.set('fontFamily', font);
+                    canvas.requestRenderAll();
+                    updatePropertiesPanel();
+                }
+            }
+        });
+
+        propBold.onclick = () => {
+            const activeObj = canvas.getActiveObject();
+            if (activeObj) {
+                activeObj.set('fontWeight', activeObj.fontWeight === 'bold' ? 'normal' : 'bold');
+                canvas.requestRenderAll();
+            }
+        };
+
+        propItalic.onclick = () => {
+            const activeObj = canvas.getActiveObject();
+            if (activeObj) {
+                activeObj.set('fontStyle', activeObj.fontStyle === 'italic' ? 'normal' : 'italic');
+                canvas.requestRenderAll();
+            }
+        };
+
+        propUnderline.onclick = () => {
+            const activeObj = canvas.getActiveObject();
+            if (activeObj) {
+                activeObj.set('underline', !activeObj.underline);
+                canvas.requestRenderAll();
+            }
+        };
+
+        // --- Layer Management ---
+        function updateLayerList() {
+            layerList.innerHTML = '';
+            const objects = canvas.getObjects().slice().reverse(); // Top first
+
+            if (objects.length === 0) {
+                layerList.innerHTML = '<li class="layer-item" style="justify-content:center;">No layers</li>';
+                return;
+            }
+
+            objects.forEach((obj, index) => {
+                const li = document.createElement('li');
+                li.className = 'layer-item';
+                // Highlight if selected
+                if (canvas.getActiveObjects().includes(obj)) {
+                    li.classList.add('active');
+                }
+
+                let name = obj.type;
+                if (obj.type === 'i-text' || obj.type === 'text') {
+                    name = obj.text || 'Text';
+                } else if (obj.data && obj.data.type === 'qrcode') {
+                    name = 'QR Code';
+                }
+
+                li.innerHTML = `
+                    <span class="layer-name">${name}</span>
+                    <div class="layer-actions">
+                        <button class="layer-btn" onclick="toggleVis(event, ${objects.length - 1 - index})"><i class="fas fa-eye"></i></button>
+                    </div>
+                `;
+                li.onclick = () => {
+                    canvas.discardActiveObject();
+                    canvas.setActiveObject(obj);
+                    canvas.requestRenderAll();
+                };
+                layerList.appendChild(li);
+            });
+        }
+
+        window.toggleVis = function (e, actualIndex) {
+            e.stopPropagation();
+            const obj = canvas.item(actualIndex);
+            obj.visible = !obj.visible;
+            canvas.discardActiveObject(); // Deselect if hidden
+            canvas.requestRenderAll();
+            updateLayerList(); // Re-render list to maybe show crossed eye
+        }
+
+        function updateLayerListHighlight() {
+            // Just re-render
+            updateLayerList();
+        }
+
+        document.getElementById('bringFrontBtn').onclick = () => {
+            const activeObj = canvas.getActiveObject();
+            if (activeObj) { activeObj.bringToFront(); updateLayerList(); }
+        };
+        document.getElementById('bringForwardBtn').onclick = () => {
+            const activeObj = canvas.getActiveObject();
+            if (activeObj) { activeObj.bringForward(); updateLayerList(); }
+        };
+        document.getElementById('sendBackwardBtn').onclick = () => {
+            const activeObj = canvas.getActiveObject();
+            if (activeObj) { activeObj.sendBackwards(); updateLayerList(); }
+        };
+        document.getElementById('sendBackBtn').onclick = () => {
+            const activeObj = canvas.getActiveObject();
+            if (activeObj) { activeObj.sendToBack(); updateLayerList(); }
+        };
+
+        // --- Delete & Clear ---
+        function deleteSelected() {
+            const activeObjects = canvas.getActiveObjects();
+            if (activeObjects.length) {
+                canvas.discardActiveObject();
+                activeObjects.forEach(function (object) {
+                    canvas.remove(object);
+                });
+            }
+        }
+
+        document.getElementById('deleteSelectedBtn').onclick = deleteSelected;
+        document.getElementById('clearCanvasBtn').onclick = () => {
+            if (confirm('Are you sure you want to clear the canvas?')) {
+                canvas.clear();
+                canvas.setBackgroundColor('#fff', canvas.renderAll.bind(canvas));
+                updateLayerList();
+            }
+        };
+
+        // Keyboard Support
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Delete' || e.key === 'Backspace') {
+                // If editing text, don't delete object
+                if (canvas.getActiveObject() && canvas.getActiveObject().isEditing) return;
+                deleteSelected();
+            }
+        });
+
+        // --- Save & Load ---
+        document.getElementById('saveDesignBtn').onclick = saveDesign;
+
+        function saveDesign() {
+            // Convert Fabric State to Legacy JSON Format for Compatibility
+            const design = {
+                backgroundColor: canvas.backgroundColor === '#fff' ? '#FFFFFF' : canvas.backgroundColor,
+                backgroundImage: canvas.bgImageSrc || (canvas.backgroundImage ? canvas.backgroundImage.src : null),
+                textElements: [],
+                elements: []
+            };
+
+            const objects = canvas.getObjects();
+            objects.forEach(obj => {
+                // Text Elements
+                if (obj.type === 'i-text' || obj.type === 'text') {
+                    // Check if it is a placeholder
+                    const isPlaceholder = /{.*}/.test(obj.text);
+                    design.textElements.push({
+                        text: obj.text,
+                        x: obj.left,
+                        y: obj.top,
+                        fontSize: obj.fontSize,
+                        color: obj.fill,
+                        fontFamily: obj.fontFamily,
+                        fontWeight: obj.fontWeight,
+                        isPlaceholder: isPlaceholder
+                    });
+                }
+                // QR Code (Groups)
+                else if (obj.type === 'group' && obj.data && obj.data.type === 'qrcode') {
+                    design.elements.push({
+                        type: 'qrcode',
+                        x: obj.left,
+                        y: obj.top,
+                        size: obj.width * obj.scaleX // Approximation of size
+                    });
+                }
+            });
+
+            console.log("Saving Design:", design);
+            localStorage.setItem('certificateDesign', JSON.stringify(design));
+            alert('Design saved successfully!');
+        }
+
+        function loadDesign() {
+            const savedJSON = localStorage.getItem('certificateDesign');
+            if (!savedJSON) return;
+
+            try {
+                const design = JSON.parse(savedJSON);
+
+                // Set Background
+                if (design.backgroundColor) {
+                    canvas.setBackgroundColor(design.backgroundColor, canvas.renderAll.bind(canvas));
+                    $("#backgroundColor").spectrum("set", design.backgroundColor);
+                }
+                if (design.backgroundImage) {
+                    fabric.Image.fromURL(design.backgroundImage, function (img) {
+                        // Reuse the fit logic
+                        const scale = Math.min(canvas.width / img.width, canvas.height / img.height);
+                        canvas.setBackgroundImage(img, canvas.renderAll.bind(canvas), {
+                            scaleX: canvas.width / img.width,
+                            scaleY: canvas.height / img.height
+                        });
+                        canvas.bgImageSrc = design.backgroundImage;
+                    });
+                }
+
+                // Restore Text
+                if (design.textElements) {
+                    design.textElements.forEach(el => {
+                        addText(el.text, {
+                            x: el.x, y: el.y,
+                            fontSize: el.fontSize, color: el.color,
+                            fontFamily: el.fontFamily, fontWeight: el.fontWeight
+                        });
+                    });
+                }
+
+                // Restore Elements (QR)
+                if (design.elements) {
+                    design.elements.forEach(el => {
+                        if (el.type === 'qrcode') {
+                            // Create QR functionality manually again as addQRBtn does
+                            const rect = new fabric.Rect({
+                                width: 100, height: 100, fill: '#f3f4f6', stroke: '#000', strokeDashArray: [5, 5]
+                            });
+                            const text = new fabric.IText('QR Code', {
+                                fontSize: 14, originX: 'center', originY: 'center', left: 50, top: 50
+                            });
+
+                            const group = new fabric.Group([rect, text], {
+                                left: el.x, top: el.y,
+                                data: { type: 'qrcode' }
+                            });
+                            // Handle size if we saved it as width (original implementation used size/width)
+                            if (el.size) {
+                                group.scaleToWidth(el.size);
+                            }
+
+                            canvas.add(group);
+                        }
+                    });
+                }
+
+            } catch (e) {
+                console.error("Error loading design", e);
+            }
+        }
+
+        // --- Back Button ---
+        document.getElementById('backBtn').onclick = () => window.location.href = 'admin-dashboard.html';
+
+        // --- Zoom ---
+        // Basic zoom implementation
+        let zoom = 1;
+        function setZoom(val) {
+            zoom = val;
+            canvas.setZoom(zoom);
+            // Center canvas ?? For now just simple zoom
+        }
+        document.getElementById('zoomInBtn').onclick = () => setZoom(zoom * 1.1);
+        document.getElementById('zoomOutBtn').onclick = () => setZoom(zoom * 0.9);
+        document.getElementById('resetZoomBtn').onclick = () => setZoom(1);
+
+    </script>
+</body>
+
+</html>

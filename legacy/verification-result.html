@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Certificate Verification | CertiSecure</title>
+    <!-- Google Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600&display=swap"
+        rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- QRCode Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+    <style>
+        :root {
+            --primary: #6366f1;
+            --secondary: #10b981;
+            --error: #ef4444;
+            --dark: #0f172a;
+            --light: #f8fafc;
+            --gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            --card-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: #f1f5f9;
+            min-height: 100vh;
+            color: var(--dark);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .navbar {
+            background: white;
+            padding: 1.5rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: var(--primary);
+        }
+
+        .container {
+            flex: 1;
+            padding: 3rem 5%;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .verification-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: var(--card-shadow);
+            overflow: hidden;
+            max-width: 800px;
+            margin: 0 auto;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeIn 0.5s forwards;
+        }
+
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .status-header {
+            padding: 2rem;
+            text-align: center;
+            color: white;
+        }
+
+        .status-valid {
+            background: var(--secondary);
+        }
+
+        .status-invalid {
+            background: var(--error);
+        }
+
+        .status-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+
+        .status-title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .cert-details {
+            padding: 3rem;
+        }
+
+        .detail-row {
+            display: flex;
+            border-bottom: 1px solid #e2e8f0;
+            padding: 1rem 0;
+        }
+
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+
+        .detail-label {
+            width: 40%;
+            font-weight: 600;
+            color: #64748b;
+        }
+
+        .detail-value {
+            width: 60%;
+            color: var(--dark);
+            font-weight: 500;
+        }
+
+        .preview-btn {
+            display: block;
+            width: 100%;
+            padding: 1rem;
+            background: var(--primary);
+            color: white;
+            text-align: center;
+            text-decoration: none;
+            border: none;
+            font-weight: 600;
+            margin-top: 2rem;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .preview-btn:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+
+        .loading {
+            text-align: center;
+            padding: 4rem;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="logo">
+            <i class="fas fa-certificate"></i>
+            <span>CertiSecure</span>
+        </div>
+        <a href="index.html" style="text-decoration: none; color: #64748b; font-weight: 500;">
+            <i class="fas fa-arrow-left"></i> Back to Home
+        </a>
+    </nav>
+
+    <div class="container">
+        <div id="loading" class="loading">
+            <div class="spinner"></div>
+            <p>Verifying Certificate...</p>
+        </div>
+
+        <div id="result" style="display: none;">
+            <!-- Content verified via JS -->
+        </div>
+    </div>
+
+    <!-- Verification Modal -->
+    <div id="certModal"
+        style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:1000; justify-content:center; align-items:center;">
+        <div
+            style="background:white; padding:20px; border-radius:10px; max-width:90%; max-height:90%; overflow:auto; position:relative;">
+            <button onclick="document.getElementById('certModal').style.display='none'"
+                style="position:absolute; top:10px; right:10px; border:none; background:transparent; font-size:1.5rem; cursor:pointer;">&times;</button>
+            <div id="certModalContent"></div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const certId = urlParams.get('id');
+
+            // Simulate API delay for effect
+            setTimeout(() => {
+                verifyCertificate(certId);
+            }, 500);
+        });
+
+        async function verifyCertificate(id) {
+            const loading = document.getElementById('loading');
+            const result = document.getElementById('result');
+
+            loading.style.display = 'none';
+            result.style.display = 'block';
+
+            if (!id) {
+                showInvalid('No Certificate ID provided');
+                return;
+            }
+
+            // Look up in Local Storage (Frontend-only mode)
+            try {
+                const db = JSON.parse(localStorage.getItem('certificateDatabase') || '[]');
+                const cert = db.find(c => c.uuid === id || c.certId === id);
+
+                if (cert) {
+                    showValid(cert);
+                } else {
+                    showInvalid(id);
+                }
+            } catch (error) {
+                console.error("Verification error:", error);
+                showInvalid(id);
+            }
+        }
+
+        function showValid(cert) {
+            const result = document.getElementById('result');
+            // Store cert HTML globally or in a data attribute to view later
+            window.currentCertHtml = cert.html;
+
+            result.innerHTML = `
+                <div class="verification-card">
+                    <div class="status-header status-valid">
+                        <i class="fas fa-check-circle status-icon"></i>
+                        <h2 class="status-title">Valid Certificate</h2>
+                        <p>This certificate is authentic and registered.</p>
+                    </div>
+                    <div class="cert-details">
+                        <div class="detail-row">
+                            <span class="detail-label">Recipient Name</span>
+                            <span class="detail-value">${cert.name}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Course / Event</span>
+                            <span class="detail-value">${cert.course || 'N/A'}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Issue Date</span>
+                            <span class="detail-value">${cert.date || new Date().toLocaleDateString()}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Certificate ID</span>
+                            <span class="detail-value">${cert.certId || cert.uuid}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Status</span>
+                            <span class="detail-value" style="color: var(--secondary);"><i class="fas fa-check"></i> Verified</span>
+                        </div>
+                        
+                        <button class="preview-btn" onclick="viewCertificate()">
+                            <i class="fas fa-eye"></i> View Certificate Copy
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function showInvalid(id) {
+            const result = document.getElementById('result');
+            result.innerHTML = `
+                <div class="verification-card">
+                    <div class="status-header status-invalid">
+                        <i class="fas fa-times-circle status-icon"></i>
+                        <h2 class="status-title">Invalid Certificate</h2>
+                        <p>The certificate ID could not be verified.</p>
+                    </div>
+                    <div class="cert-details">
+                        <p style="text-align: center; color: #64748b; margin-bottom: 2rem;">
+                            We could not find a certificate matching the ID: <strong>${id}</strong>.
+                        </p>
+                        <div class="detail-row">
+                            <span class="detail-label">Verification Status</span>
+                            <span class="detail-value" style="color: var(--error);">Not Found / Invalid</span>
+                        </div>
+                        <p style="text-align: center; margin-top: 2rem; font-size: 0.9rem; color: #94a3b8;">
+                            Please check the ID and try again. If you believe this is an error, contact the issuing organization.
+                        </p>
+                    </div>
+                </div>
+            `;
+        }
+
+        function viewCertificate() {
+            if (window.currentCertHtml) {
+                const modal = document.getElementById('certModal');
+                const content = document.getElementById('certModalContent');
+                content.innerHTML = window.currentCertHtml;
+
+                // Re-render QR if present in the HTML (libs often need re-init)
+                // However, since it's just HTML string, the div for QR is there but empty.
+                // We'd need to re-run QRCode. For simplicity, we might just show the text content 
+                // or if the original HTML had the QR as an image (if we saved it after rendering)
+                // But we saved the raw template HTML which has <div id="qrcode-..."></div>.
+                // We can try to re-init QR if we have the UUID.
+
+                // For now, simpler is better: Just show the HTML.
+                modal.style.display = 'flex';
+            } else {
+                alert("Certificate content not available.");
+            }
+        }
+    </script>
+</body>
+
+</html>

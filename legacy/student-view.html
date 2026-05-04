@@ -1,0 +1,1471 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Certificate | CertVerify Pro</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- QR Code Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+    <!-- PDF Generation Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+    <!-- Confetti Library -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+
+    <style>
+        /* ===== GLOBAL DESIGN SYSTEM ===== */
+        :root {
+            /* Color System */
+            --primary-blue: #2563EB;
+            --primary-purple: #7C3AED;
+            --success-green: #10B981;
+            --error-red: #F43F5E;
+            --warning-amber: #F59E0B;
+            --background-light: #F3F4F6;
+            --background-white: #FFFFFF;
+            --text-dark: #1F2937;
+            --text-gray: #6B7280;
+            --border-light: #E5E7EB;
+
+            /* Typography */
+            --font-primary: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            --font-heading: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+
+            /* Spacing */
+            --spacing-xs: 0.5rem;
+            --spacing-sm: 1rem;
+            --spacing-md: 1.5rem;
+            --spacing-lg: 2rem;
+            --spacing-xl: 3rem;
+
+            /* Shadows */
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+
+            /* Border Radius */
+            --radius-sm: 0.375rem;
+            --radius-md: 0.5rem;
+            --radius-lg: 0.75rem;
+            --radius-xl: 1rem;
+        }
+
+        /* ===== BASE STYLES ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-primary);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: var(--text-dark);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        button,
+        input {
+            font-family: inherit;
+            font-size: inherit;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 var(--spacing-md);
+        }
+
+        /* ===== STUDENT VIEW STYLES ===== */
+        /* Header */
+        .header {
+            background-color: rgba(255, 255, 255, 0.95);
+            padding: var(--spacing-md) 0;
+            box-shadow: var(--shadow-sm);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-xs);
+        }
+
+        .logo-icon {
+            color: var(--primary-blue);
+            font-size: 1.75rem;
+        }
+
+        .logo-text {
+            font-family: var(--font-heading);
+            font-weight: 700;
+            font-size: 1.5rem;
+            background: linear-gradient(90deg, var(--primary-blue), var(--primary-purple));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .verify-link {
+            color: var(--text-gray);
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-xs);
+            transition: color 0.2s ease;
+        }
+
+        .verify-link:hover {
+            color: var(--primary-blue);
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            padding: var(--spacing-xl) 0;
+        }
+
+        /* Congratulations Card */
+        .congrats-card {
+            background-color: var(--background-white);
+            border-radius: var(--radius-xl);
+            padding: var(--spacing-xl);
+            margin-bottom: var(--spacing-xl);
+            box-shadow: var(--shadow-lg);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .congrats-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: linear-gradient(90deg, var(--primary-blue), var(--primary-purple));
+        }
+
+        .confetti-icon {
+            font-size: 4rem;
+            color: var(--warning-amber);
+            margin-bottom: var(--spacing-md);
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        .congrats-title {
+            font-family: var(--font-heading);
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: var(--spacing-sm);
+            background: linear-gradient(90deg, var(--primary-blue), var(--primary-purple));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .congrats-subtitle {
+            font-size: 1.25rem;
+            color: var(--text-gray);
+            margin-bottom: var(--spacing-lg);
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Certificate Preview */
+        .certificate-section {
+            background-color: var(--background-white);
+            border-radius: var(--radius-xl);
+            padding: var(--spacing-xl);
+            margin-bottom: var(--spacing-xl);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .section-title {
+            font-family: var(--font-heading);
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .certificate-id {
+            font-family: monospace;
+            background-color: var(--background-light);
+            padding: 0.5rem 1rem;
+            border-radius: var(--radius-md);
+            font-size: 0.875rem;
+            color: var(--text-gray);
+        }
+
+        .certificate-preview-container {
+            background-color: #F8FAFC;
+            border: 2px dashed var(--border-light);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-xl);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 500px;
+            overflow: auto;
+        }
+
+        .certificate-display {
+            width: 800px;
+            height: 600px;
+            background-color: white;
+            position: relative;
+            box-shadow: var(--shadow-lg);
+            transform-origin: center;
+            transition: transform 0.3s ease;
+        }
+
+        .certificate-display:hover {
+            transform: scale(1.01);
+        }
+
+        /* Action Buttons */
+        .actions-section {
+            background-color: var(--background-white);
+            border-radius: var(--radius-xl);
+            padding: var(--spacing-xl);
+            margin-bottom: var(--spacing-xl);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .actions-title {
+            font-family: var(--font-heading);
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: var(--spacing-lg);
+            text-align: center;
+        }
+
+        .actions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: var(--spacing-md);
+        }
+
+        .action-card {
+            background-color: var(--background-light);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-lg);
+            text-align: center;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: var(--spacing-md);
+        }
+
+        .action-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-md);
+            border-color: var(--primary-blue);
+        }
+
+        .action-icon {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.75rem;
+        }
+
+        .download-icon {
+            background-color: rgba(16, 185, 129, 0.1);
+            color: var(--success-green);
+        }
+
+        .linkedin-icon {
+            background-color: rgba(37, 99, 235, 0.1);
+            color: #0A66C2;
+        }
+
+        .whatsapp-icon {
+            background-color: rgba(37, 195, 142, 0.1);
+            color: #25D366;
+        }
+
+        .share-icon {
+            background-color: rgba(139, 92, 246, 0.1);
+            color: var(--primary-purple);
+        }
+
+        .action-content {
+            flex: 1;
+        }
+
+        .action-title {
+            font-weight: 600;
+            font-size: 1.125rem;
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .action-description {
+            color: var(--text-gray);
+            font-size: 0.875rem;
+            margin-bottom: var(--spacing-md);
+        }
+
+        .action-button {
+            width: 100%;
+            padding: var(--spacing-sm);
+            border: none;
+            border-radius: var(--radius-md);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--spacing-xs);
+        }
+
+        .download-btn {
+            background-color: var(--success-green);
+            color: white;
+        }
+
+        .download-btn:hover {
+            background-color: #0DA271;
+        }
+
+        .linkedin-btn {
+            background-color: #0A66C2;
+            color: white;
+        }
+
+        .linkedin-btn:hover {
+            background-color: #084DA3;
+        }
+
+        .whatsapp-btn {
+            background-color: #25D366;
+            color: white;
+        }
+
+        .whatsapp-btn:hover {
+            background-color: #1DA851;
+        }
+
+        .share-btn {
+            background-color: var(--primary-purple);
+            color: white;
+        }
+
+        .share-btn:hover {
+            background-color: #6D28D9;
+        }
+
+        /* Verification Info */
+        .verification-info {
+            background-color: var(--background-white);
+            border-radius: var(--radius-xl);
+            padding: var(--spacing-xl);
+            margin-bottom: var(--spacing-xl);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .verification-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: var(--spacing-lg);
+        }
+
+        .verification-item {
+            text-align: center;
+        }
+
+        .verification-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin: 0 auto var(--spacing-sm);
+            background-color: rgba(37, 99, 235, 0.1);
+            color: var(--primary-blue);
+        }
+
+        .verification-title {
+            font-weight: 600;
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .verification-value {
+            color: var(--text-gray);
+            font-size: 0.875rem;
+        }
+
+        /* Social Sharing */
+        .social-sharing {
+            background-color: var(--background-white);
+            border-radius: var(--radius-xl);
+            padding: var(--spacing-xl);
+            margin-bottom: var(--spacing-xl);
+            box-shadow: var(--shadow-lg);
+            text-align: center;
+        }
+
+        .sharing-title {
+            font-family: var(--font-heading);
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: var(--spacing-md);
+        }
+
+        .sharing-subtitle {
+            color: var(--text-gray);
+            margin-bottom: var(--spacing-lg);
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .social-buttons {
+            display: flex;
+            justify-content: center;
+            gap: var(--spacing-md);
+            flex-wrap: wrap;
+        }
+
+        .social-btn {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            color: white;
+            transition: transform 0.2s ease;
+        }
+
+        .social-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .facebook-btn {
+            background-color: #1877F2;
+        }
+
+        .twitter-btn {
+            background-color: #1DA1F2;
+        }
+
+        .linkedin-social-btn {
+            background-color: #0A66C2;
+        }
+
+        .whatsapp-social-btn {
+            background-color: #25D366;
+        }
+
+        .email-btn {
+            background-color: var(--primary-purple);
+        }
+
+        /* Footer */
+        .footer {
+            background-color: rgba(255, 255, 255, 0.95);
+            padding: var(--spacing-lg) 0;
+            margin-top: auto;
+            border-top: 1px solid var(--border-light);
+        }
+
+        .footer-content {
+            text-align: center;
+        }
+
+        .footer-text {
+            color: var(--text-gray);
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .footer-link {
+            color: var(--primary-blue);
+            font-weight: 500;
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal {
+            background-color: white;
+            border-radius: var(--radius-xl);
+            padding: var(--spacing-xl);
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            transform: translateY(20px);
+            transition: transform 0.3s ease;
+        }
+
+        .modal-overlay.active .modal {
+            transform: translateY(0);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .modal-title {
+            font-family: var(--font-heading);
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-gray);
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.2s ease;
+        }
+
+        .modal-close:hover {
+            background-color: var(--background-light);
+        }
+
+        .modal-content {
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .modal-form-group {
+            margin-bottom: var(--spacing-md);
+        }
+
+        .modal-label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: var(--spacing-xs);
+            font-size: 0.875rem;
+        }
+
+        .modal-input {
+            width: 100%;
+            padding: var(--spacing-sm);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-md);
+            font-size: 0.875rem;
+            transition: all 0.2s ease;
+        }
+
+        .modal-input:focus {
+            outline: none;
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: var(--spacing-sm);
+        }
+
+        .modal-primary-btn {
+            flex: 1;
+            background-color: var(--primary-blue);
+            color: white;
+            border: none;
+            padding: var(--spacing-sm);
+            border-radius: var(--radius-md);
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .modal-secondary-btn {
+            flex: 1;
+            background-color: var(--background-light);
+            color: var(--text-dark);
+            border: 1px solid var(--border-light);
+            padding: var(--spacing-sm);
+            border-radius: var(--radius-md);
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            .certificate-display {
+                width: 600px;
+                height: 450px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .congrats-title {
+                font-size: 2rem;
+            }
+
+            .certificate-display {
+                width: 100%;
+                height: 400px;
+            }
+
+            .actions-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .header-container {
+                flex-direction: column;
+                gap: var(--spacing-sm);
+            }
+
+            .social-buttons {
+                gap: var(--spacing-sm);
+            }
+        }
+
+        @media (max-width: 480px) {
+
+            .congrats-card,
+            .certificate-section,
+            .actions-section,
+            .verification-info,
+            .social-sharing {
+                padding: var(--spacing-lg);
+            }
+
+            .congrats-title {
+                font-size: 1.75rem;
+            }
+
+            .certificate-display {
+                height: 300px;
+            }
+
+            .modal {
+                padding: var(--spacing-lg);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container header-container">
+            <div class="logo">
+                <i class="fas fa-certificate logo-icon"></i>
+                <span class="logo-text">CertVerify Pro</span>
+            </div>
+            <a href="index.html" class="verify-link">
+                <i class="fas fa-shield-check"></i>
+                Verify Another Certificate
+            </a>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <!-- Congratulations Card -->
+            <div class="congrats-card">
+                <i class="fas fa-trophy confetti-icon"></i>
+                <h1 class="congrats-title">Congratulations, <span id="studentName">Alex Johnson</span>!</h1>
+                <p class="congrats-subtitle">
+                    You have successfully earned your certificate. Share your achievement with the world and
+                    add it to your professional profiles.
+                </p>
+            </div>
+
+            <!-- Certificate Preview -->
+            <div class="certificate-section">
+                <div class="section-header">
+                    <h2 class="section-title">Your Certificate</h2>
+                    <div class="certificate-id" id="certificateId">CERT-2023-IJKL-9012</div>
+                </div>
+
+                <div class="certificate-preview-container">
+                    <div class="certificate-display" id="certificateDisplay">
+                        <!-- Certificate will be rendered here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons (The Gold Mine) -->
+            <div class="actions-section">
+                <h2 class="actions-title">Share Your Achievement</h2>
+                <div class="actions-grid">
+                    <!-- Download PDF -->
+                    <div class="action-card">
+                        <div class="action-icon download-icon">
+                            <i class="fas fa-file-pdf"></i>
+                        </div>
+                        <div class="action-content">
+                            <h3 class="action-title">Download Certificate</h3>
+                            <p class="action-description">
+                                Download a high-quality PDF version of your certificate for printing or digital storage.
+                            </p>
+                            <button class="action-button download-btn" id="downloadPdfBtn">
+                                <i class="fas fa-download"></i>
+                                Download PDF
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Add to LinkedIn -->
+                    <div class="action-card">
+                        <div class="action-icon linkedin-icon">
+                            <i class="fab fa-linkedin"></i>
+                        </div>
+                        <div class="action-content">
+                            <h3 class="action-title">Add to LinkedIn Profile</h3>
+                            <p class="action-description">
+                                Add this certificate to your LinkedIn profile to showcase your skills and achievements.
+                            </p>
+                            <button class="action-button linkedin-btn" id="linkedinBtn">
+                                <i class="fab fa-linkedin"></i>
+                                Add to LinkedIn
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Share on WhatsApp -->
+                    <div class="action-card">
+                        <div class="action-icon whatsapp-icon">
+                            <i class="fab fa-whatsapp"></i>
+                        </div>
+                        <div class="action-content">
+                            <h3 class="action-title">Share on WhatsApp</h3>
+                            <p class="action-description">
+                                Share your achievement with friends and family on WhatsApp with a single click.
+                            </p>
+                            <button class="action-button whatsapp-btn" id="whatsappBtn">
+                                <i class="fab fa-whatsapp"></i>
+                                Share on WhatsApp
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- More Sharing Options -->
+                    <div class="action-card">
+                        <div class="action-icon share-icon">
+                            <i class="fas fa-share-alt"></i>
+                        </div>
+                        <div class="action-content">
+                            <h3 class="action-title">More Sharing Options</h3>
+                            <p class="action-description">
+                                Share your certificate via email, Twitter, Facebook, or generate a shareable link.
+                            </p>
+                            <button class="action-button share-btn" id="shareBtn">
+                                <i class="fas fa-share-alt"></i>
+                                More Options
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Verification Info -->
+            <div class="verification-info">
+                <div class="verification-grid">
+                    <div class="verification-item">
+                        <div class="verification-icon">
+                            <i class="fas fa-calendar-check"></i>
+                        </div>
+                        <h3 class="verification-title">Issue Date</h3>
+                        <p class="verification-value" id="issueDate">October 15, 2023</p>
+                    </div>
+
+                    <div class="verification-item">
+                        <div class="verification-icon">
+                            <i class="fas fa-graduation-cap"></i>
+                        </div>
+                        <h3 class="verification-title">Course</h3>
+                        <p class="verification-value" id="courseName">Advanced Web Development</p>
+                    </div>
+
+                    <div class="verification-item">
+                        <div class="verification-icon">
+                            <i class="fas fa-university"></i>
+                        </div>
+                        <h3 class="verification-title">Institution</h3>
+                        <p class="verification-value" id="institutionName">Tech Academy</p>
+                    </div>
+
+                    <div class="verification-item">
+                        <div class="verification-icon">
+                            <i class="fas fa-qrcode"></i>
+                        </div>
+                        <h3 class="verification-title">Verification Code</h3>
+                        <p class="verification-value">
+                            Scan QR Code or visit:
+                            <a href="index.html"
+                                style="color: var(--primary-blue); font-family: monospace; font-size: 0.75rem;">
+                                certverify.pro/verify
+                            </a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Social Sharing -->
+            <div class="social-sharing">
+                <h2 class="sharing-title">Share Your Success</h2>
+                <p class="sharing-subtitle">
+                    Let your network know about your achievement. Click any platform below to share instantly.
+                </p>
+                <div class="social-buttons">
+                    <a href="#" class="social-btn facebook-btn" id="facebookShare">
+                        <i class="fab fa-facebook-f"></i>
+                    </a>
+                    <a href="#" class="social-btn twitter-btn" id="twitterShare">
+                        <i class="fab fa-twitter"></i>
+                    </a>
+                    <a href="#" class="social-btn linkedin-social-btn" id="linkedinShare">
+                        <i class="fab fa-linkedin-in"></i>
+                    </a>
+                    <a href="#" class="social-btn whatsapp-social-btn" id="whatsappShare">
+                        <i class="fab fa-whatsapp"></i>
+                    </a>
+                    <a href="#" class="social-btn email-btn" id="emailShare">
+                        <i class="fas fa-envelope"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container footer-content">
+            <p class="footer-text">
+                This certificate is digitally signed and verifiable. Any tampering will invalidate the certificate.
+            </p>
+            <a href="index.html" class="footer-link">Verify this certificate online</a>
+        </div>
+    </footer>
+
+    <!-- LinkedIn Modal -->
+    <div class="modal-overlay" id="linkedinModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 class="modal-title">Add to LinkedIn Profile</h2>
+                <button class="modal-close" id="closeLinkedinModal">&times;</button>
+            </div>
+            <div class="modal-content">
+                <p style="margin-bottom: var(--spacing-md);">
+                    To add this certificate to your LinkedIn profile:
+                </p>
+                <ol style="padding-left: var(--spacing-lg); margin-bottom: var(--spacing-md);">
+                    <li style="margin-bottom: var(--spacing-xs);">Log in to your LinkedIn account</li>
+                    <li style="margin-bottom: var(--spacing-xs);">Go to your profile page</li>
+                    <li style="margin-bottom: var(--spacing-xs);">Click "Add profile section"</li>
+                    <li style="margin-bottom: var(--spacing-xs);">Select "Licenses & Certifications"</li>
+                    <li style="margin-bottom: var(--spacing-xs);">Fill in the details below</li>
+                </ol>
+
+                <div class="modal-form-group">
+                    <label class="modal-label">LinkedIn Profile URL</label>
+                    <input type="text" class="modal-input" id="linkedinUrl"
+                        placeholder="https://linkedin.com/in/yourprofile">
+                </div>
+
+                <div
+                    style="background-color: var(--background-light); padding: var(--spacing-md); border-radius: var(--radius-md); margin-bottom: var(--spacing-md);">
+                    <h3 style="font-size: 0.875rem; font-weight: 600; margin-bottom: var(--spacing-xs);">Suggested
+                        Details:</h3>
+                    <p style="font-size: 0.875rem; margin-bottom: var(--spacing-xs);">
+                        <strong>Name:</strong> <span id="modalCourseName">Advanced Web Development</span>
+                    </p>
+                    <p style="font-size: 0.875rem; margin-bottom: var(--spacing-xs);">
+                        <strong>Issuing Organization:</strong> <span id="modalInstitutionName">Tech Academy</span>
+                    </p>
+                    <p style="font-size: 0.875rem; margin-bottom: var(--spacing-xs);">
+                        <strong>Issue Date:</strong> <span id="modalIssueDate">October 2023</span>
+                    </p>
+                    <p style="font-size: 0.875rem;">
+                        <strong>Credential ID:</strong> <span id="modalCredentialId">CERT-2023-IJKL-9012</span>
+                    </p>
+                </div>
+
+                <div class="modal-form-group">
+                    <label class="modal-label">Verification URL (Required for LinkedIn)</label>
+                    <input type="text" class="modal-input" id="verificationUrl"
+                        value="https://certverify.pro/verify?id=CERT-2023-IJKL-9012" readonly>
+                    <button class="secondary-btn" style="margin-top: var(--spacing-xs); width: 100%;"
+                        id="copyVerificationUrl">
+                        <i class="fas fa-copy"></i> Copy Verification URL
+                    </button>
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button class="modal-secondary-btn" id="cancelLinkedinBtn">Cancel</button>
+                <a href="https://www.linkedin.com/profile/add" target="_blank" class="modal-primary-btn"
+                    id="openLinkedinBtn">
+                    Open LinkedIn
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Share Modal -->
+    <div class="modal-overlay" id="shareModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 class="modal-title">Share Your Certificate</h2>
+                <button class="modal-close" id="closeShareModal">&times;</button>
+            </div>
+            <div class="modal-content">
+                <div style="margin-bottom: var(--spacing-md);">
+                    <label class="modal-label">Shareable Link</label>
+                    <input type="text" class="modal-input" id="shareableLink"
+                        value="https://certverify.pro/certificate/CERT-2023-IJKL-9012" readonly>
+                    <button class="secondary-btn" style="margin-top: var(--spacing-xs); width: 100%;"
+                        id="copyShareLink">
+                        <i class="fas fa-copy"></i> Copy Link
+                    </button>
+                </div>
+
+                <div>
+                    <label class="modal-label">Embed Code</label>
+                    <textarea class="modal-input" id="embedCode" rows="4" readonly>
+<div style="text-align: center;">
+    <h3>My Certificate of Achievement</h3>
+    <p>I've completed the Advanced Web Development course at Tech Academy</p>
+    <a href="https://certverify.pro/verify?id=CERT-2023-IJKL-9012" style="background-color: #2563EB; color: white; padding: 10px 20px; border-radius: 5px; text-decoration: none;">
+        Verify Certificate
+    </a>
+</div>
+                    </textarea>
+                    <button class="secondary-btn" style="margin-top: var(--spacing-xs); width: 100%;"
+                        id="copyEmbedCode">
+                        <i class="fas fa-copy"></i> Copy Embed Code
+                    </button>
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button class="modal-secondary-btn" id="cancelShareBtn">Close</button>
+                <button class="modal-primary-btn" id="generateQrBtn">
+                    <i class="fas fa-qrcode"></i> Generate QR Code
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // DOM Elements
+        const studentName = document.getElementById('studentName');
+        const certificateId = document.getElementById('certificateId');
+        const certificateDisplay = document.getElementById('certificateDisplay');
+        const issueDate = document.getElementById('issueDate');
+        const courseName = document.getElementById('courseName');
+        const institutionName = document.getElementById('institutionName');
+
+        // Action buttons
+        const downloadPdfBtn = document.getElementById('downloadPdfBtn');
+        const linkedinBtn = document.getElementById('linkedinBtn');
+        const whatsappBtn = document.getElementById('whatsappBtn');
+        const shareBtn = document.getElementById('shareBtn');
+
+        // Social sharing buttons
+        const facebookShare = document.getElementById('facebookShare');
+        const twitterShare = document.getElementById('twitterShare');
+        const linkedinShare = document.getElementById('linkedinShare');
+        const whatsappShare = document.getElementById('whatsappShare');
+        const emailShare = document.getElementById('emailShare');
+
+        // Modal elements
+        const linkedinModal = document.getElementById('linkedinModal');
+        const closeLinkedinModal = document.getElementById('closeLinkedinModal');
+        const cancelLinkedinBtn = document.getElementById('cancelLinkedinBtn');
+        const copyVerificationUrl = document.getElementById('copyVerificationUrl');
+
+        const shareModal = document.getElementById('shareModal');
+        const closeShareModal = document.getElementById('closeShareModal');
+        const cancelShareBtn = document.getElementById('cancelShareBtn');
+        const copyShareLink = document.getElementById('copyShareLink');
+        const copyEmbedCode = document.getElementById('copyEmbedCode');
+        const generateQrBtn = document.getElementById('generateQrBtn');
+
+        // Modal form elements
+        const modalCourseName = document.getElementById('modalCourseName');
+        const modalInstitutionName = document.getElementById('modalInstitutionName');
+        const modalIssueDate = document.getElementById('modalIssueDate');
+        const modalCredentialId = document.getElementById('modalCredentialId');
+
+        // Certificate data (in production, this would come from URL parameters or API)
+        const certificateData = {
+            id: 'CERT-2023-IJKL-9012',
+            name: 'Alex Johnson',
+            course: 'Advanced Web Development',
+            institution: 'Tech Academy',
+            issueDate: 'October 15, 2023',
+            instructor: 'Dr. Sarah Williams',
+            grade: 'A+',
+            duration: '12 Weeks',
+            credits: '3.0'
+        };
+
+        // Initialize
+        function init() {
+            // Load certificate data
+            loadCertificateData();
+
+            // Render certificate
+            renderCertificate();
+
+            // Setup event listeners
+            setupEventListeners();
+
+            // Trigger confetti animation
+            setTimeout(() => {
+                triggerConfetti();
+            }, 500);
+        }
+
+        // Load certificate data
+        function loadCertificateData() {
+            // In production, this would come from URL parameters or API
+            // For demo, we're using the certificateData object
+
+            studentName.textContent = certificateData.name;
+            certificateId.textContent = certificateData.id;
+            issueDate.textContent = certificateData.issueDate;
+            courseName.textContent = certificateData.course;
+            institutionName.textContent = certificateData.institution;
+
+            // Update modal data
+            modalCourseName.textContent = certificateData.course;
+            modalInstitutionName.textContent = certificateData.institution;
+            modalIssueDate.textContent = certificateData.issueDate;
+            modalCredentialId.textContent = certificateData.id;
+        }
+
+        // Render certificate
+        function renderCertificate() {
+            // This would use the actual certificate template
+            // For demo, we'll create a beautiful certificate
+
+            const certificateHtml = `
+                <div style="width: 100%; height: 100%; background: linear-gradient(135deg, #F3F4F6 0%, #FFFFFF 100%); position: relative; overflow: hidden;">
+                    <!-- Decorative elements -->
+                    <div style="position: absolute; top: 0; left: 0; right: 0; height: 8px; background: linear-gradient(90deg, #2563EB, #7C3AED);"></div>
+                    <div style="position: absolute; top: 40px; left: 40px; width: 80px; height: 80px; border: 3px solid #2563EB; border-radius: 50%; opacity: 0.1;"></div>
+                    <div style="position: absolute; bottom: 40px; right: 40px; width: 60px; height: 60px; border: 2px solid #7C3AED; border-radius: 50%; opacity: 0.1;"></div>
+                    
+                    <!-- Certificate content -->
+                    <div style="padding: 60px; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;">
+                        <!-- Institution logo/name -->
+                        <div style="margin-bottom: 40px;">
+                            <div style="font-size: 1.5rem; font-weight: 700; color: #2563EB; margin-bottom: 10px;">${certificateData.institution}</div>
+                            <div style="height: 2px; width: 100px; background: #7C3AED; margin: 0 auto;"></div>
+                        </div>
+                        
+                        <!-- Main title -->
+                        <div style="margin-bottom: 30px;">
+                            <h1 style="font-family: 'Poppins', sans-serif; font-size: 3rem; font-weight: 700; color: #1F2937; margin-bottom: 10px;">CERTIFICATE</h1>
+                            <div style="font-size: 1.25rem; color: #6B7280;">OF ACHIEVEMENT</div>
+                        </div>
+                        
+                        <!-- Awarded to -->
+                        <div style="margin-bottom: 40px;">
+                            <div style="font-size: 1.25rem; color: #6B7280; margin-bottom: 10px;">This certificate is awarded to</div>
+                            <div style="font-family: 'Poppins', sans-serif; font-size: 2.5rem; font-weight: 600; color: #2563EB; margin-bottom: 10px;">${certificateData.name}</div>
+                            <div style="font-size: 1.25rem; color: #6B7280;">for successfully completing</div>
+                        </div>
+                        
+                        <!-- Course details -->
+                        <div style="margin-bottom: 40px; padding: 20px; background: rgba(37, 99, 235, 0.05); border-radius: 10px; max-width: 600px;">
+                            <div style="font-family: 'Poppins', sans-serif; font-size: 1.75rem; font-weight: 600; color: #1F2937; margin-bottom: 10px;">${certificateData.course}</div>
+                            <div style="display: flex; justify-content: center; gap: 30px; font-size: 0.875rem; color: #6B7280;">
+                                <div>Grade: <strong style="color: #10B981;">${certificateData.grade}</strong></div>
+                                <div>Duration: <strong>${certificateData.duration}</strong></div>
+                                <div>Credits: <strong>${certificateData.credits}</strong></div>
+                            </div>
+                        </div>
+                        
+                        <!-- Date and signatures -->
+                        <div style="display: flex; justify-content: space-between; width: 100%; max-width: 600px; margin-top: 40px;">
+                            <div style="text-align: left;">
+                                <div style="font-weight: 600; margin-bottom: 5px;">Date of Issue</div>
+                                <div>${certificateData.issueDate}</div>
+                            </div>
+                            <div style="text-align: right;">
+                                <div style="font-weight: 600; margin-bottom: 5px;">Authorized Signature</div>
+                                <div>${certificateData.instructor}</div>
+                                <div style="font-size: 0.875rem; color: #6B7280;">Course Instructor</div>
+                            </div>
+                        </div>
+                        
+                        <!-- QR Code -->
+                        <div style="position: absolute; bottom: 20px; right: 20px; width: 80px; height: 80px;" id="certificateQrCode"></div>
+                    </div>
+                </div>
+            `;
+
+            certificateDisplay.innerHTML = certificateHtml;
+
+            // Generate QR code
+            setTimeout(() => {
+                new QRCode(document.getElementById('certificateQrCode'), {
+                    text: `https://certverify.pro/verify?id=${certificateData.id}`,
+                    width: 80,
+                    height: 80,
+                    colorDark: "#2563EB",
+                    colorLight: "#ffffff",
+                    correctLevel: QRCode.CorrectLevel.H
+                });
+            }, 100);
+        }
+
+        // Set up event listeners
+        function setupEventListeners() {
+            // Download PDF button
+            downloadPdfBtn.addEventListener('click', downloadCertificateAsPdf);
+
+            // LinkedIn button
+            linkedinBtn.addEventListener('click', () => {
+                linkedinModal.classList.add('active');
+            });
+
+            // WhatsApp button
+            whatsappBtn.addEventListener('click', shareOnWhatsApp);
+
+            // Share button
+            shareBtn.addEventListener('click', () => {
+                shareModal.classList.add('active');
+            });
+
+            // Social sharing buttons
+            facebookShare.addEventListener('click', shareOnFacebook);
+            twitterShare.addEventListener('click', shareOnTwitter);
+            linkedinShare.addEventListener('click', shareOnLinkedIn);
+            whatsappShare.addEventListener('click', shareOnWhatsApp);
+            emailShare.addEventListener('click', shareViaEmail);
+
+            // Modal close buttons
+            closeLinkedinModal.addEventListener('click', () => {
+                linkedinModal.classList.remove('active');
+            });
+
+            cancelLinkedinBtn.addEventListener('click', () => {
+                linkedinModal.classList.remove('active');
+            });
+
+            closeShareModal.addEventListener('click', () => {
+                shareModal.classList.remove('active');
+            });
+
+            cancelShareBtn.addEventListener('click', () => {
+                shareModal.classList.remove('active');
+            });
+
+            // Copy buttons
+            copyVerificationUrl.addEventListener('click', () => {
+                copyToClipboard('https://certverify.pro/verify?id=' + certificateData.id);
+                showNotification('Verification URL copied to clipboard!');
+            });
+
+            copyShareLink.addEventListener('click', () => {
+                copyToClipboard('https://certverify.pro/certificate/' + certificateData.id);
+                showNotification('Shareable link copied to clipboard!');
+            });
+
+            copyEmbedCode.addEventListener('click', () => {
+                copyToClipboard(document.getElementById('embedCode').value);
+                showNotification('Embed code copied to clipboard!');
+            });
+
+            // Generate QR button
+            generateQrBtn.addEventListener('click', generateQrCodeModal);
+
+            // Close modals when clicking outside
+            document.addEventListener('click', (e) => {
+                if (e.target === linkedinModal) {
+                    linkedinModal.classList.remove('active');
+                }
+                if (e.target === shareModal) {
+                    shareModal.classList.remove('active');
+                }
+            });
+        }
+
+        // Download certificate as PDF
+        function downloadCertificateAsPdf() {
+            // In production, this would generate and download a PDF
+            // For demo, we'll show a success message
+
+            showNotification('Preparing your certificate for download...', 'info');
+
+            // Simulate PDF generation
+            setTimeout(() => {
+                showNotification('Certificate downloaded successfully!', 'success');
+
+                // In a real implementation, this would trigger a download
+                // const link = document.createElement('a');
+                // link.href = `/api/certificates/${certificateData.id}/download`;
+                // link.download = `Certificate_${certificateData.name.replace(/\s+/g, '_')}.pdf`;
+                // link.click();
+            }, 1500);
+        }
+
+        // Share on WhatsApp
+        function shareOnWhatsApp() {
+            const text = `I just earned my ${certificateData.course} certificate from ${certificateData.institution}! Check it out: https://certverify.pro/certificate/${certificateData.id}`;
+            const url = `https://wa.me/?text=${encodeURIComponent(text)}`;
+            window.open(url, '_blank');
+        }
+
+        // Share on Facebook
+        function shareOnFacebook() {
+            const url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent('https://certverify.pro/certificate/' + certificateData.id)}`;
+            window.open(url, '_blank', 'width=600,height=400');
+        }
+
+        // Share on Twitter
+        function shareOnTwitter() {
+            const text = `Just earned my ${certificateData.course} certificate! #Achievement #Certification`;
+            const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent('https://certverify.pro/certificate/' + certificateData.id)}`;
+            window.open(url, '_blank', 'width=600,height=400');
+        }
+
+        // Share on LinkedIn
+        function shareOnLinkedIn() {
+            const url = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent('https://certverify.pro/certificate/' + certificateData.id)}`;
+            window.open(url, '_blank', 'width=600,height=400');
+        }
+
+        // Share via email
+        function shareViaEmail() {
+            const subject = `My ${certificateData.course} Certificate`;
+            const body = `Hi,\n\nI'm excited to share that I've earned my ${certificateData.course} certificate from ${certificateData.institution}!\n\nYou can view it here: https://certverify.pro/certificate/${certificateData.id}\n\nBest regards,\n${certificateData.name}`;
+            const url = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+            window.location.href = url;
+        }
+
+        // Generate QR code modal
+        function generateQrCodeModal() {
+            // Create QR code modal
+            const modalHtml = `
+                <div style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 1000;">
+                    <div style="background: white; border-radius: 0.75rem; padding: 2rem; max-width: 400px; width: 90%; text-align: center;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                            <h3 style="font-family: 'Poppins', sans-serif; font-size: 1.25rem; font-weight: 600;">QR Code for Sharing</h3>
+                            <button id="closeQrModal" style="background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--text-gray);">&times;</button>
+                        </div>
+                        
+                        <div id="qrCodeContainer" style="margin: 0 auto 1.5rem;"></div>
+                        
+                        <p style="font-size: 0.875rem; color: var(--text-gray); margin-bottom: 1rem;">
+                            Scan this QR code to verify or view the certificate
+                        </p>
+                        
+                        <div style="display: flex; gap: 0.5rem;">
+                            <button id="downloadQrBtn" style="background-color: var(--primary-blue); color: white; border: none; padding: 0.5rem 1rem; border-radius: 0.375rem; cursor: pointer; flex: 1;">
+                                <i class="fas fa-download"></i> Download QR
+                            </button>
+                            <button id="closeQrBtn" style="background-color: var(--background-light); color: var(--text-dark); border: 1px solid var(--border-light); padding: 0.5rem 1rem; border-radius: 0.375rem; cursor: pointer; flex: 1;">
+                                Close
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            const modal = document.createElement('div');
+            modal.innerHTML = modalHtml;
+            document.body.appendChild(modal);
+
+            // Generate QR code
+            new QRCode(document.getElementById('qrCodeContainer'), {
+                text: `https://certverify.pro/verify?id=${certificateData.id}`,
+                width: 200,
+                height: 200,
+                colorDark: "#2563EB",
+                colorLight: "#ffffff",
+                correctLevel: QRCode.CorrectLevel.H
+            });
+
+            // Add event listeners
+            document.getElementById('closeQrModal').addEventListener('click', () => {
+                document.body.removeChild(modal);
+            });
+
+            document.getElementById('closeQrBtn').addEventListener('click', () => {
+                document.body.removeChild(modal);
+            });
+
+            document.getElementById('downloadQrBtn').addEventListener('click', () => {
+                // In production, this would download the QR code as image
+                showNotification('QR code downloaded!', 'success');
+                setTimeout(() => {
+                    document.body.removeChild(modal);
+                }, 1000);
+            });
+
+            // Close when clicking outside
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    document.body.removeChild(modal);
+                }
+            });
+        }
+
+        // Trigger confetti animation
+        function triggerConfetti() {
+            confetti({
+                particleCount: 100,
+                spread: 70,
+                origin: { y: 0.6 }
+            });
+
+            // Add more confetti after delay
+            setTimeout(() => {
+                confetti({
+                    particleCount: 50,
+                    angle: 60,
+                    spread: 55,
+                    origin: { x: 0 }
+                });
+
+                confetti({
+                    particleCount: 50,
+                    angle: 120,
+                    spread: 55,
+                    origin: { x: 1 }
+                });
+            }, 250);
+        }
+
+        // Copy to clipboard
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).catch(err => {
+                console.error('Failed to copy: ', err);
+            });
+        }
+
+        // Show notification
+        function showNotification(message, type = 'success') {
+            const notification = document.createElement('div');
+            notification.className = 'notification';
+            notification.textContent = message;
+            notification.style.cssText = `
+                position: fixed;
+                bottom: 20px;
+                right: 20px;
+                padding: 1rem 1.5rem;
+                background: ${type === 'success' ? '#10B981' : '#2563EB'};
+                color: white;
+                border-radius: 0.5rem;
+                box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+                z-index: 1000;
+                animation: slideIn 0.3s ease;
+            `;
+
+            document.body.appendChild(notification);
+
+            setTimeout(() => {
+                notification.style.animation = 'slideOut 0.3s ease';
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
+
+        // Add CSS for notifications
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideIn {
+                from { transform: translateX(100%); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+            @keyframes slideOut {
+                from { transform: translateX(0); opacity: 1; }
+                to { transform: translateX(100%); opacity: 0; }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Initialize on load
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+
+</html>
